@@ -478,35 +478,74 @@ export default function App() {
           left: 0,
           width: "100%",
           height: "100%",
-          background: "rgba(0,0,0,0.6)",
+          background: "rgba(0,0,0,0.65)",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          zIndex: 999
+          zIndex: 999,
+          padding: 20
         }}>
           <div style={{
-            background: "#fff",
-            padding: 20,
-            borderRadius: 10,
+            background: "#ffffff",
+            padding: "26px 22px",
+            borderRadius: 18,
             textAlign: "center",
-            width: "80%",
-            maxWidth: 300
+            width: "100%",
+            maxWidth: 340,
+            boxShadow: "0 18px 40px rgba(0,0,0,0.35)"
           }}>
-            <p style={{ marginBottom: 20 }}>
-              Vuoi uscire senza salvare?
+            <h3 style={{
+              margin: "0 0 10px",
+              color: "#111",
+              fontSize: 22,
+              fontWeight: 800
+            }}>
+              Uscire dal form?
+            </h3>
+
+            <p style={{
+              margin: "0 0 24px",
+              color: "#555",
+              fontSize: 15,
+              lineHeight: 1.4
+            }}>
+              I dati inseriti non verranno salvati.
             </p>
 
-            <button
-              onClick={() => setShowExit(false)}
-              style={{ marginRight: 10 }}
-            >
-              Annulla
-            </button>
+            <div style={{
+              display: "flex",
+              gap: 12,
+              justifyContent: "center"
+            }}>
+              <button
+                onClick={() => setShowExit(false)}
+                style={{
+                  flex: 1,
+                  padding: "12px 14px",
+                  borderRadius: 12,
+                  border: "1px solid #ccc",
+                  background: "#f3f3f3",
+                  color: "#111",
+                  fontSize: 16,
+                  fontWeight: 700
+                }}
+              >
+                Annulla
+              </button>
 
-            <button
-              onClick={() => window.location.href = "/"}
-              style={{ background: "red", color: "white" }}
-            >
+              <button
+                onClick={() => window.location.href = "/"}
+                style={{
+                  flex: 1,
+                  padding: "12px 14px",
+                  borderRadius: 12,
+                  border: "none",
+                  background: "#e53935",
+                  color: "#fff",
+                  fontSize: 16,
+                  fontWeight: 800
+                }}
+              >
               Esci
             </button>
           </div>
