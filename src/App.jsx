@@ -534,7 +534,7 @@ export default function App() {
               </button>
 
               <button
-                onClick={() => window.location.href = "/"}
+                onClick={() => window.history.back()}
                 style={{
                   flex: 1,
                   padding: "12px 14px",
