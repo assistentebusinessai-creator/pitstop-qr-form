@@ -196,6 +196,7 @@ export default function App() {
   const [subs, setSubs] = useState([]);
   const [expanded, setExpanded] = useState(null);
   const [qrSrc, setQrSrc] = useState("");
+  const [showExit, setShowExit] = useState(false);
 
   useEffect(() => {
     const url = window.location.href.split("?")[0];
@@ -434,7 +435,29 @@ export default function App() {
       <style>{css}</style>
       <div className="app">
         <nav className="nav">
-          <div className="nav-brand">🔧 DS84</div>
+          <div className="nav-brand">
+            🔧 DS84
+            <button
+              style={{
+                position: "absolute",
+                right: 16,
+                top: 12,
+                background: "transparent",
+                border: "none",
+                color: "white",
+                fontSize: "22px",
+                cursor: "pointer"
+              }}
+              onClick={() => setShowExit(true)}
+            >
+              ✕
+            </button>
+          
+
+          </div>
+
+
+
           <div className="nav-tabs">
             {[["form","Form"]].map(([k,l]) => (
               <button key={k} className={`nav-tab${tab===k?" active":""}`}
@@ -448,6 +471,50 @@ export default function App() {
         {tab === "form"    &&  FormPage()}
         {tab === "history" && <HistoryPage />}
       </div>
-    </>
+      {showExit && (
+        <div style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          background: "rgba(0,0,0,0.6)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 999
+        }}>
+          <div style={{
+            background: "#fff",
+            padding: 20,
+            borderRadius: 10,
+            textAlign: "center",
+            width: "80%",
+            maxWidth: 300
+          }}>
+            <p style={{ marginBottom: 20 }}>
+              Vuoi uscire senza salvare?
+            </p>
+
+            <button
+              onClick={() => setShowExit(false)}
+              style={{ marginRight: 10 }}
+            >
+              Annulla
+            </button>
+
+            <button
+              onClick={() => window.location.href = "/"}
+              style={{ background: "red", color: "white" }}
+            >
+              Esci
+            </button>
+          </div>
+        </div>
+      )}
+
+
+
+      </>
   );
 }
