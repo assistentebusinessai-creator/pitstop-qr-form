@@ -104,13 +104,13 @@ const css = `
   .field { margin-bottom: 12px; }
   .field label { font-size: 11px; color: var(--muted); font-weight: 600; letter-spacing: .5px; display: block; margin-bottom: 6px; }
   .field input, .field select, .field textarea {
-    width: 100%; background: var(--surface);
-    border: 1.5px solid var(--border); border-radius: 8px;
-    color: var(--text); padding: 13px 14px;
+    width: 100%; background: #242424;
+    border: 1.5px solid #3a3a3a; border-radius: 12px;
+    color: #ffffff; padding: 16px 16px;
     font-family: 'DM Sans', sans-serif; font-size: 15px;
-    outline: none; transition: border-color .18s; -webkit-appearance: none;
+    outline: none; transition: border-color .18s; background .18s; -webkit-appearance: none;
   }
-  .field input::placeholder, .field textarea::placeholder { color: #444; }
+  .field input::placeholder, .field textarea::placeholder { color: #8f8f8f; }
   .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--accent); }
   .field.err input, .field.err select, .field.err textarea { border-color: #e53935; }
   .errmsg { font-size: 11px; color: #e53935; margin-top: 4px; }
