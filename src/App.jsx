@@ -8,7 +8,7 @@ const MARCHE = [
   "Subaru","Suzuki","Tesla","Toyota","Volkswagen","Volvo","Altra"
 ];
 const ANNI = Array.from({ length: 36 }, (_, i) => 2025 - i);
-const EMPTY = { nome:"", cognome:"", telefono:"", marca:"", modello:"", anno:"", km:"", problema:"" };
+const EMPTY = { nome:"", cognome:"", telefono:"", marca:"", modello:"", anno:"", km:"",targa: "", problema:"" };
 
 function fmt(ts) {
   return new Date(ts).toLocaleString("it-IT", {
@@ -246,6 +246,7 @@ export default function App() {
             modello: form.modello,
             anno: form.anno,
             km: form.km,
+            targa: form.targa,
             problema: form.problema,
           }
         ]);
@@ -354,17 +355,30 @@ export default function App() {
           {errors.anno && <div className="errmsg">{errors.anno}</div>}
         </div>
       </div>
+      <div style={{ display: "flex", gap: "10px" }}>
 
-      <div className="field">
-        <label>CHILOMETRI</label>
-        <input
-          type="number"
-          placeholder="Es: 120000"
-          value={form.km}
-          onChange={e => field("km", e.target.value)}
-        />
+        <div className="field" style={{ flex: 1 }}>
+          <label>TARGA</label>
+          <input
+            type="text"
+            placeholder="Es: AA123BB"
+            value={form.targa || ""}
+            onChange={e => field("targa", e.target.value)}
+          />
+        </div>
+
+
+        <div className="field">
+          <label>CHILOMETRI</label>
+          <input
+            type="number"
+            placeholder="Es: 120000"
+            value={form.km}
+            onChange={e => field("km", e.target.value)}
+          />
+        </div>
+
       </div>
-
       <div className="section-head">🔩 Problema</div>
       <div className={`field${errors.problema ? " err" : ""}`}>
         <label>DESCRIZIONE</label>
@@ -422,7 +436,7 @@ export default function App() {
         <nav className="nav">
           <div className="nav-brand">🔧 DS84</div>
           <div className="nav-tabs">
-            {[["qr","QR"],["form","Form"],["history","Bozze"]].map(([k,l]) => (
+            {[["form","Form"]].map(([k,l]) => (
               <button key={k} className={`nav-tab${tab===k?" active":""}`}
                 onClick={() => { setTab(k); if(k==="history") loadSubs(); }}>
                 {l}{k==="history" && subs.length > 0 && <span className="badge">{subs.length}</span>}
