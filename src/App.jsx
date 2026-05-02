@@ -1,14 +1,9 @@
 import { useState, useEffect } from "react";
 import { supabase } from "./supabaseClient";
 
-const MARCHE = [
-  "Alfa Romeo","Audi","BMW","Citroën","Dacia","Ferrari","Fiat","Ford",
-  "Honda","Hyundai","Jeep","Kia","Lancia","Land Rover","Maserati","Mazda",
-  "Mercedes-Benz","Nissan","Opel","Peugeot","Renault","Seat","Skoda",
-  "Subaru","Suzuki","Tesla","Toyota","Volkswagen","Volvo","Altra"
-];
-const ANNI = Array.from({ length: 36 }, (_, i) => 2025 - i);
-const EMPTY = { nome:"", cognome:"", telefono:"", marca:"", modello:"", anno:"", km:"",targa: "", problema:"" };
+// cognome/modello/anno/km rimangono nello stato ma non vengono mostrati
+// → Supabase riceve sempre tutti i campi, nessuna colonna si rompe
+const EMPTY = { nome:"", cognome:"", telefono:"", marca:"", modello:"", anno:"", km:"", targa:"", problema:"" };
 
 function fmt(ts) {
   return new Date(ts).toLocaleString("it-IT", {
@@ -189,7 +184,7 @@ const css = `
 
 export default function App() {
   const [tab, setTab] = useState("form");
-  const [screen, setScreen] = useState("form"); // form | success
+  const [screen, setScreen] = useState("form");
   const [form, setForm] = useState({ ...EMPTY });
   const [errors, setErrors] = useState({});
   const [lastSaved, setLastSaved] = useState(null);
@@ -218,19 +213,19 @@ export default function App() {
 
   function field(k, v) { setForm(p => ({ ...p, [k]: v })); setErrors(p => ({ ...p, [k]: "" })); }
 
+  // ── VALIDAZIONE SEMPLIFICATA (solo i 5 campi visibili) ───────────────────
   function validate() {
     const e = {};
-    if (!form.nome.trim()) e.nome = "Obbligatorio";
-    if (!form.cognome.trim()) e.cognome = "Obbligatorio";
+    if (!form.nome.trim())     e.nome     = "Obbligatorio";
     if (!form.telefono.trim()) e.telefono = "Obbligatorio";
-    if (!form.marca) e.marca = "Seleziona";
-    if (!form.modello.trim()) e.modello = "Obbligatorio";
-    if (!form.anno) e.anno = "Seleziona";
+    if (!form.marca.trim())    e.marca    = "Obbligatorio";
+    if (!form.targa.trim())    e.targa    = "Obbligatorio";
     if (!form.problema.trim()) e.problema = "Descrivi il problema";
     setErrors(e);
     return !Object.keys(e).length;
   }
 
+  // ── SAVE: identico all'originale, Supabase non cambia ────────────────────
   async function save() {
     if (!validate()) return;
     const ts = Date.now();
@@ -238,29 +233,19 @@ export default function App() {
     try {
       const { error } = await supabase
         .from("preventivi_bozze")
-        .insert([
-          {
-            nome: form.nome,
-            cognome: form.cognome,
-            telefono: form.telefono,
-            marca: form.marca,
-            modello: form.modello,
-            anno: form.anno,
-            km: form.km,
-            targa: form.targa,
-            problema: form.problema,
-          }
-        ]);
-
-      if (error) {
-        console.error(error);
-        return;
-      }
-
-    } catch (err) {
-      console.error(err);
-      return;
-    }
+        .insert([{
+          nome:     form.nome,
+          cognome:  form.cognome,   // stringa vuota, colonna intatta
+          telefono: form.telefono,
+          marca:    form.marca,
+          modello:  form.modello,   // stringa vuota
+          anno:     form.anno,      // stringa vuota
+          km:       form.km,        // stringa vuota
+          targa:    form.targa,
+          problema: form.problema,
+        }]);
+      if (error) { console.error(error); return; }
+    } catch (err) { console.error(err); return; }
     setLastSaved(entry);
     setScreen("success");
     loadSubs();
@@ -296,12 +281,9 @@ export default function App() {
       <div className="success-title">BOZZA SALVATA</div>
       <div className="success-sub">I dati sono pronti nella sezione Bozze</div>
       <div className="recap-card">
-        <div className="recap-row"><span className="rk">Cliente</span><span className="rv">{lastSaved.nome} {lastSaved.cognome}</span></div>
+        <div className="recap-row"><span className="rk">Cliente</span><span className="rv">{lastSaved.nome}</span></div>
         <div className="recap-row"><span className="rk">Telefono</span><span className="rv">{lastSaved.telefono}</span></div>
-        <div className="recap-row"><span className="rk">Veicolo</span><span className="rv">
-          {lastSaved.marca} {lastSaved.modello} ({lastSaved.anno})
-          {lastSaved.km && ` · ${lastSaved.km} km`}
-        </span></div>
+        <div className="recap-row"><span className="rk">Veicolo</span><span className="rv">{lastSaved.marca} · {lastSaved.targa}</span></div>
         <div className="recap-row"><span className="rk">Problema</span><span className="rv problema-val">{lastSaved.problema}</span></div>
       </div>
       <button className="btn-nuovo" onClick={() => { setForm({...EMPTY}); setErrors({}); setScreen("form"); }}>
@@ -313,73 +295,48 @@ export default function App() {
       <div className="page-title">NUOVO CLIENTE</div>
       <div className="page-sub">Compila mentre parli — ci vogliono 30 secondi</div>
 
+      {/* ── NOME ── */}
       <div className="section-head">👤 Anagrafica</div>
-      <div className="grid2">
-        <div className={`field${errors.nome ? " err" : ""}`}>
-          <label>NOME</label>
-          <input type="text" placeholder="Mario" value={form.nome} onChange={e => field("nome", e.target.value)} />
-          {errors.nome && <div className="errmsg">{errors.nome}</div>}
-        </div>
-        <div className={`field${errors.cognome ? " err" : ""}`}>
-          <label>COGNOME</label>
-          <input type="text" placeholder="Rossi" value={form.cognome} onChange={e => field("cognome", e.target.value)} />
-          {errors.cognome && <div className="errmsg">{errors.cognome}</div>}
-        </div>
+      <div className={`field${errors.nome ? " err" : ""}`}>
+        <label>NOME</label>
+        <input type="text" placeholder="Mario Rossi" value={form.nome} onChange={e => field("nome", e.target.value)} />
+        {errors.nome && <div className="errmsg">{errors.nome}</div>}
       </div>
+
       <div className={`field${errors.telefono ? " err" : ""}`}>
         <label>TELEFONO</label>
         <input type="tel" placeholder="333 123 4567" value={form.telefono} onChange={e => field("telefono", e.target.value)} />
         {errors.telefono && <div className="errmsg">{errors.telefono}</div>}
       </div>
 
+      {/* ── VEICOLO + TARGA ── */}
       <div className="section-head">🚗 Veicolo</div>
-      <div className={`field${errors.marca ? " err" : ""}`}>
-        <label>MARCA</label>
-        <select value={form.marca} onChange={e => field("marca", e.target.value)}>
-          <option value="">Seleziona marca…</option>
-          {MARCHE.map(m => <option key={m}>{m}</option>)}
-        </select>
-        {errors.marca && <div className="errmsg">{errors.marca}</div>}
-      </div>
       <div className="grid2">
-        <div className={`field${errors.modello ? " err" : ""}`}>
-          <label>MODELLO</label>
-          <input type="text" placeholder="Panda" value={form.modello} onChange={e => field("modello", e.target.value)} />
-          {errors.modello && <div className="errmsg">{errors.modello}</div>}
+        <div className={`field${errors.marca ? " err" : ""}`}>
+          <label>VEICOLO</label>
+          <input
+            type="text"
+            placeholder="Es: Fiat Panda"
+            value={form.marca}
+            onChange={e => field("marca", e.target.value)}
+          />
+          {errors.marca && <div className="errmsg">{errors.marca}</div>}
         </div>
-        <div className={`field${errors.anno ? " err" : ""}`}>
-          <label>ANNO</label>
-          <select value={form.anno} onChange={e => field("anno", e.target.value)}>
-            <option value="">Anno…</option>
-            {ANNI.map(a => <option key={a}>{a}</option>)}
-          </select>
-          {errors.anno && <div className="errmsg">{errors.anno}</div>}
-        </div>
-      </div>
-      <div style={{ display: "flex", gap: "10px" }}>
-
-        <div className="field" style={{ flex: 1 }}>
+        <div className={`field${errors.targa ? " err" : ""}`}>
           <label>TARGA</label>
           <input
             type="text"
-            placeholder="Es: AA123BB"
-            value={form.targa || ""}
-            onChange={e => field("targa", e.target.value)}
+            placeholder="AA123BB"
+            value={form.targa}
+            onChange={e => field("targa", e.target.value.toUpperCase())}
+            maxLength={7}
+            style={{textTransform:"uppercase", letterSpacing:2}}
           />
+          {errors.targa && <div className="errmsg">{errors.targa}</div>}
         </div>
-
-
-        <div className="field">
-          <label>CHILOMETRI</label>
-          <input
-            type="number"
-            placeholder="Es: 120000"
-            value={form.km}
-            onChange={e => field("km", e.target.value)}
-          />
-        </div>
-
       </div>
+
+      {/* ── PROBLEMA ── */}
       <div className="section-head">🔩 Problema</div>
       <div className={`field${errors.problema ? " err" : ""}`}>
         <label>DESCRIZIONE</label>
@@ -409,8 +366,8 @@ export default function App() {
         <div key={s.id} className={`card${expanded === s.id ? " open" : ""}`} onClick={() => setExpanded(expanded === s.id ? null : s.id)}>
           <div className="card-top">
             <div>
-              <div className="card-name">{s.nome} {s.cognome}</div>
-              <div className="card-car">🚗 {s.marca} {s.modello} · {s.anno}</div>
+              <div className="card-name">{s.nome}</div>
+              <div className="card-car">🚗 {s.marca} · {s.targa}</div>
               <div className="draft-badge">BOZZA</div>
             </div>
             <div className="card-date">{fmt(s.ts)}</div>
@@ -418,9 +375,8 @@ export default function App() {
           {expanded === s.id && (
             <div className="card-detail">
               <div className="drow"><span className="dk">Telefono</span><span className="dv">{s.telefono}</span></div>
-              <div className="drow"><span className="dk">Marca</span><span className="dv">{s.marca}</span></div>
-              <div className="drow"><span className="dk">Modello</span><span className="dv">{s.modello}</span></div>
-              <div className="drow"><span className="dk">Anno</span><span className="dv">{s.anno}</span></div>
+              <div className="drow"><span className="dk">Veicolo</span><span className="dv">{s.marca}</span></div>
+              <div className="drow"><span className="dk">Targa</span><span className="dv">{s.targa}</span></div>
               <div className="problema-box">{s.problema}</div>
               <button className="del-btn" onClick={e => del(s.id, e)}>🗑 Elimina</button>
             </div>
@@ -439,25 +395,15 @@ export default function App() {
             🔧 DS84
             <button
               style={{
-                position: "absolute",
-                right: 16,
-                top: 12,
-                background: "transparent",
-                border: "none",
-                color: "white",
-                fontSize: "22px",
-                cursor: "pointer"
+                position: "absolute", right: 16, top: 12,
+                background: "transparent", border: "none",
+                color: "white", fontSize: "22px", cursor: "pointer"
               }}
               onClick={() => setShowExit(true)}
             >
               ✕
             </button>
-          
-
           </div>
-
-
-
           <div className="nav-tabs">
             {[["form","Form"]].map(([k,l]) => (
               <button key={k} className={`nav-tab${tab===k?" active":""}`}
@@ -468,103 +414,60 @@ export default function App() {
           </div>
         </nav>
         {tab === "qr"      && <QrPage />}
-        {tab === "form"    &&  FormPage()}
+        {tab === "form"    && FormPage()}
         {tab === "history" && <HistoryPage />}
       </div>
+
       {showExit && (
         <div style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          background: "rgba(0,0,0,0.65)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          zIndex: 999,
-          padding: 20
+          position:"fixed", top:0, left:0, width:"100%", height:"100%",
+          background:"rgba(0,0,0,0.65)", display:"flex", alignItems:"center",
+          justifyContent:"center", zIndex:999, padding:20
         }}>
           <div style={{
-            background: "#ffffff",
-            padding: "26px 22px",
-            borderRadius: 18,
-            textAlign: "center",
-            width: "100%",
-            maxWidth: 340,
-            boxShadow: "0 18px 40px rgba(0,0,0,0.35)"
+            background:"#ffffff", padding:"26px 22px", borderRadius:18,
+            textAlign:"center", width:"100%", maxWidth:340,
+            boxShadow:"0 18px 40px rgba(0,0,0,0.35)"
           }}>
-            <h3 style={{
-              margin: "0 0 10px",
-              color: "#111",
-              fontSize: 22,
-              fontWeight: 800
-            }}>
+            <h3 style={{margin:"0 0 10px", color:"#111", fontSize:22, fontWeight:800}}>
               Vuoi uscire dal form?
             </h3>
-
-            <p style={{
-              margin: "0 0 24px",
-              color: "#555",
-              fontSize: 15,
-              lineHeight: 1.4
-            }}>
+            <p style={{margin:"0 0 24px", color:"#555", fontSize:15, lineHeight:1.4}}>
               Se continui tutti i dati inseriti verranno persi.
             </p>
-
-            <div style={{
-              display: "flex",
-              gap: 12,
-              justifyContent: "center"
-            }}>
+            <div style={{display:"flex", gap:12, justifyContent:"center"}}>
               <button
                 onClick={() => setShowExit(false)}
                 style={{
-                  flex: 1,
-                  padding: "12px 14px",
-                  borderRadius: 12,
-                  border: "1px solid #ccc",
-                  background: "#f3f3f3",
-                  color: "#111",
-                  fontSize: 16,
-                  fontWeight: 700
+                  flex:1, padding:"12px 14px", borderRadius:12,
+                  border:"1px solid #ccc", background:"#f3f3f3",
+                  color:"#111", fontSize:16, fontWeight:700
                 }}
               >
                 Continua modifica
               </button>
-
               <button
                 onClick={() => {
                   if (window.matchMedia('(display-mode: standalone)').matches) {
-                    // modalità app → reset e torna alla schermata iniziale
                     setForm({ ...EMPTY });
                     setShowExit(false);
                     window.scrollTo(0, 0);
                   } else {
-                    // modalità browser → torna indietro
                     window.history.back();
                   }
                 }}
                 style={{
-                  flex: 1,
-                  padding: "12px 14px",
-                  borderRadius: 12,
-                  border: "none",
-                  background: "#e53935",
-                  color: "#fff",
-                  fontSize: 16,
-                  fontWeight: 800
+                  flex:1, padding:"12px 14px", borderRadius:12,
+                  border:"none", background:"#e53935",
+                  color:"#fff", fontSize:16, fontWeight:800
                 }}
               >
-              Annulla dati
-            </button>
+                Annulla dati
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-    )}
-
-
-
-  </>
-   );
+      )}
+    </>
+  );
 }
