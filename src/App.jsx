@@ -242,7 +242,7 @@ export default function App() {
           anno:     form.anno,      // stringa vuota
           km:       form.km,        // stringa vuota
           targa:    form.targa,
-          problema: form.problema,
+          problema: (form.problema || "").trim(),
         }]);
       if (error) { console.error(error); return; }
     } catch (err) { console.error(err); return; }
@@ -316,7 +316,7 @@ export default function App() {
           <label>VEICOLO</label>
           <input
             type="text"
-            placeholder="Es: Fiat Panda"
+            placeholder="Es: Panda 1.2"
             value={form.marca}
             onChange={e => field("marca", e.target.value)}
           />
