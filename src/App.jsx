@@ -500,7 +500,7 @@ export default function App() {
               fontSize: 22,
               fontWeight: 800
             }}>
-              Uscire dal form?
+              Vuoi uscire dal form?
             </h3>
 
             <p style={{
@@ -509,7 +509,7 @@ export default function App() {
               fontSize: 15,
               lineHeight: 1.4
             }}>
-              I dati inseriti non verranno salvati.
+              Se continui tutti i dati inseriti verranno persi.
             </p>
 
             <div style={{
@@ -530,7 +530,7 @@ export default function App() {
                   fontWeight: 700
                 }}
               >
-                Annulla
+                Continua modifica
               </button>
 
               <button
@@ -556,7 +556,7 @@ export default function App() {
                   fontWeight: 800
                 }}
               >
-              Esci
+              Annulla dati
             </button>
           </div>
         </div>
