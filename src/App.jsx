@@ -534,7 +534,17 @@ export default function App() {
               </button>
 
               <button
-                onClick={() => window.history.back()}
+                onClick={() => {
+                  if (window.matchMedia('(display-mode: standalone)').matches) {
+                    // modalità app → reset e torna alla schermata iniziale
+                    setForm({ ...EMPTY });
+                    setShowExit(false);
+                    window.scrollTo(0, 0);
+                  } else {
+                    // modalità browser → torna indietro
+                    window.history.back();
+                  }
+                }}
                 style={{
                   flex: 1,
                   padding: "12px 14px",
