@@ -279,7 +279,7 @@ export default function App() {
     <div className="success-page">
       <div className="success-icon">✅</div>
       <div className="success-title">BOZZA SALVATA</div>
-      <div className="success-sub">I dati sono pronti nella sezione Bozze</div>
+      <div className="success-sub">I dati sono pronti nella tua App</div>
       <div className="recap-card">
         <div className="recap-row"><span className="rk">Cliente</span><span className="rv">{lastSaved.nome}</span></div>
         <div className="recap-row"><span className="rk">Telefono</span><span className="rv">{lastSaved.telefono}</span></div>
@@ -433,7 +433,7 @@ export default function App() {
             boxShadow:"0 18px 40px rgba(0,0,0,0.35)"
           }}>
             <h3 style={{margin:"0 0 10px", color:"#111", fontSize:22, fontWeight:800}}>
-              Vuoi uscire dal form?
+              Vuoi ricominciare?
             </h3>
             <p style={{margin:"0 0 24px", color:"#555", fontSize:15, lineHeight:1.4}}>
               Se continui tutti i dati inseriti verranno persi.
@@ -447,7 +447,7 @@ export default function App() {
                   color:"#111", fontSize:16, fontWeight:700
                 }}
               >
-                Continua modifica
+                Continua modifiche
               </button>
               <button
                 onClick={() => {
@@ -465,7 +465,7 @@ export default function App() {
                   color:"#fff", fontSize:16, fontWeight:800
                 }}
               >
-                Annulla dati
+                Cancella i dati
               </button>
             </div>
           </div>
