@@ -436,7 +436,7 @@ export default function App() {
               Vuoi ricominciare?
             </h3>
             <p style={{margin:"0 0 24px", color:"#555", fontSize:15, lineHeight:1.4}}>
-              Se continui tutti i dati inseriti verranno persi.
+              Se clicchi cancella tutti i dati inseriti verranno persi.
             </p>
             <div style={{display:"flex", gap:12, justifyContent:"center"}}>
               <button
