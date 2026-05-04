@@ -393,6 +393,8 @@ export default function App() {
         <nav className="nav">
           <div className="nav-brand">
             🔧 DS84
+
+          {(screen === "form") && (   
             <button
               style={{
                 position: "absolute", right: 16, top: 12,
@@ -403,6 +405,7 @@ export default function App() {
             >
               ✕
             </button>
+          )}
           </div>
           <div className="nav-tabs">
             {[["form","Form"]].map(([k,l]) => (
