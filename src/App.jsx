@@ -403,7 +403,7 @@ export default function App() {
               }}
               onClick={() => setShowExit(true)}
             >
-              ✕
+              
             </button>
           )}
           </div>
