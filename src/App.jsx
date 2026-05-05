@@ -286,7 +286,7 @@ export default function App() {
         <div className="recap-row"><span className="rk">Veicolo</span><span className="rv">{lastSaved.marca} · {lastSaved.targa}</span></div>
         <div className="recap-row"><span className="rk">Problema</span><span className="rv problema-val">{lastSaved.problema}</span></div>
       </div>
-      <button className="btn-nuovo" onClick={() => { setForm({...EMPTY}); setErrors({}); setScreen("form"); }}>
+      <button className="btn-nuovo" onClick={() => { setForm({...EMPTY}); setErrors({}); setScreen("form"); window.parent.postMessage({ type: "DS84_NUOVO_CLIENTE" }, "*"); }}>
         + NUOVO CLIENTE
       </button>
     </div>
