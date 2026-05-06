@@ -187,6 +187,8 @@ export default function App() {
   const [screen, setScreen] = useState("form");
   const [form, setForm] = useState({ ...EMPTY });
   const [errors, setErrors] = useState({});
+  const [clientiTrovati, setClientiTrovati] = useState([]);
+  const [clienteSelezionato, setClienteSelezionato] = useState(null);
   const [lastSaved, setLastSaved] = useState(null);
   const [subs, setSubs] = useState([]);
   const [expanded, setExpanded] = useState(null);
@@ -223,6 +225,29 @@ export default function App() {
     if (!form.problema.trim()) e.problema = "Descrivi il problema";
     setErrors(e);
     return !Object.keys(e).length;
+  }
+  
+  async function cercaCliente() {
+    const query = (form.nome || form.telefono || "").trim();
+
+    if (query.length < 3) {
+      setClientiTrovati([]);
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from("clienti")
+      .select("*")
+      .or(`nome.ilike.%${query}%,email.ilike.%${query}%,telefono.ilike.%${query}%`)
+      .limit(5);
+
+    if (error) {
+      console.error("Errore ricerca cliente:", error);
+      setClientiTrovati([]);
+      return;
+    }
+
+    setClientiTrovati(data || []);
   }
 
   // ── SAVE: identico all'originale, Supabase non cambia ────────────────────
@@ -299,7 +324,10 @@ export default function App() {
       <div className="section-head">👤 Anagrafica</div>
       <div className={`field${errors.nome ? " err" : ""}`}>
         <label>NOME</label>
-        <input type="text" placeholder="Mario Rossi" value={form.nome} onChange={e => field("nome", e.target.value)} />
+        <input type="text" placeholder="Mario Rossi" value={form.nome} 
+        onChange={async e => { 
+          field("nome", e.target.value) 
+          await cercaCliente()}} />
         {errors.nome && <div className="errmsg">{errors.nome}</div>}
       </div>
 
