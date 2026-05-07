@@ -3,7 +3,7 @@ import { supabase } from "./supabaseClient";
 
 // cognome/modello/anno/km rimangono nello stato ma non vengono mostrati
 // → Supabase riceve sempre tutti i campi, nessuna colonna si rompe
-const EMPTY = { nome:"", cognome:"", telefono:"", marca:"", modello:"", anno:"", km:"", targa:"", problema:"" };
+const EMPTY = { nome:"", cognome:"", telefono:"", marca:"", modello:"", anno:"", km:"", targa:"", problema:"", cliente_id:null, tipo_pratica:"" };
 
 function fmt(ts) {
   return new Date(ts).toLocaleString("it-IT", {
@@ -227,8 +227,13 @@ export default function App() {
     return !Object.keys(e).length;
   }
   
-  async function cercaCliente() {
-    const query = (form.nome || form.telefono || "").trim();
+  async function cercaCliente(valore) {
+    console.log("cerca cliente partita:", valore);
+    const query = (valore || "").trim();
+    setClientiTrovati([]);
+    const origine = form.tipo_pratica === "fattura"
+      ? "aruba"
+      : "manuale";
 
     if (query.length < 3) {
       setClientiTrovati([]);
@@ -238,7 +243,8 @@ export default function App() {
     const { data, error } = await supabase
       .from("clienti")
       .select("*")
-      .or(`nome.ilike.%${query}%,email.ilike.%${query}%,telefono.ilike.%${query}%`)
+      .eq("origine", origine)      
+      .ilike("nome", `%${query}%`)
       .limit(5);
 
     if (error) {
@@ -246,7 +252,7 @@ export default function App() {
       setClientiTrovati([]);
       return;
     }
-
+    console.log("Clienti trovati:", data);
     setClientiTrovati(data || []);
   }
 
@@ -256,6 +262,28 @@ export default function App() {
     const ts = Date.now();
     const entry = { ...form, ts, id: `req:${ts}` };
     try {
+      let clientId = form.cliente_id;
+
+      if (form.tipo_pratica === "semplice" && !clientId) {
+
+        const { data: nuovoCliente, error: erroreCliente } = await supabase
+          .from("clienti")
+          .insert([{
+            nome: form.nome,
+            telefono: form.telefono,
+            origine: "manuale",
+            fiscal_complete: false
+          }])
+          .select()
+          .single();
+
+        if (erroreCliente) {
+          console.error("Errore creazione cliente:", erroreCliente);
+          return;
+        }
+
+        clientId = nuovoCliente.id;
+      }
       const { error } = await supabase
         .from("preventivi_bozze")
         .insert([{
@@ -267,6 +295,8 @@ export default function App() {
           anno:     form.anno,      // stringa vuota
           km:       form.km,        // stringa vuota
           targa:    form.targa,
+          client_id: clientId,   
+          tipo_pratica: form.tipo_pratica,
           problema: (form.problema || "").trim(),
         }]);
       if (error) { console.error(error); return; }
@@ -319,6 +349,20 @@ export default function App() {
     <div className="form-page">
       <div className="page-title">NUOVO CLIENTE</div>
       <div className="page-sub">Compila mentre parli — ci vogliono 30 secondi</div>
+      
+      <div className="field">
+        <label>TIPO PRATICA</label>
+
+        <select
+          value={form.tipo_pratica}
+          onChange={e => field("tipo_pratica", e.target.value)}
+        >
+          <option value="">Seleziona</option>
+          <option value="semplice">Preventivo semplice</option>
+          <option value="fattura">Preventivo + fattura</option>
+        </select>
+      </div>
+
 
       {/* ── NOME ── */}
       <div className="section-head">👤 Anagrafica</div>
@@ -326,9 +370,57 @@ export default function App() {
         <label>NOME</label>
         <input type="text" placeholder="Mario Rossi" value={form.nome} 
         onChange={async e => { 
-          field("nome", e.target.value) 
-          await cercaCliente()}} />
+          const valore = e.target.value;
+          field("nome", valore); 
+          if (!valore.trim()) {
+            setClientiTrovati([]);
+          }
+          if (form.tipo_pratica) {
+            await cercaCliente(valore);
+          }
+        }} />
         {errors.nome && <div className="errmsg">{errors.nome}</div>}
+
+        {clientiTrovati.length > 0 && (
+          <div style={{
+            background:"#1c1c1c",
+            border:"1px solid #333",
+            borderRadius:"10px",
+            marginTop:"8px",
+            overflow:"hidden"
+          }}>
+            {clientiTrovati.map(cliente => (
+              <div
+                key={cliente.id}
+                onClick={() => {
+                  setForm(p => ({
+                    ...p,
+                    nome: cliente.nome || "",
+                    telefono: cliente.telefono || "",
+                    cliente_id: cliente.id || null,
+                  }));
+                  setClientiTrovati([]);
+                }}
+                style={{
+                  padding:"10px",
+                  borderBottom:"1px solid #565656",
+                  cursor:"pointer"
+                }}
+              >
+                <div style={{fontWeight:"bold"}}>
+                  {cliente.nome}
+                </div>
+
+                <div style={{
+                  fontSize:"12px",
+                  opacity:0.7
+                }}>
+                  {cliente.telefono || "Nessun telefono"}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className={`field${errors.telefono ? " err" : ""}`}>
