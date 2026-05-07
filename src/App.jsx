@@ -348,7 +348,7 @@ export default function App() {
   ) : (
     <div className="form-page">
       <div className="page-title">NUOVO CLIENTE</div>
-      <div className="page-sub">Compila mentre parli — ci vogliono 30 secondi</div>
+      <div className="page-sub">SELEZIONA IL TIPO DI PRATICA PER INIZIARE</div>
       
       <div className="field">
         <label>TIPO PRATICA</label>
