@@ -368,7 +368,7 @@ export default function App() {
       <div className="section-head">👤 Anagrafica</div>
       <div className={`field${errors.nome ? " err" : ""}`}>
         <label>NOME</label>
-        <input type="text" placeholder="Mario Rossi" value={form.nome} 
+        <input type="text" placeholder="Mario Rossi" value={form.nome} disabled={!form.tipo_pratica} 
         onChange={async e => { 
           const valore = e.target.value;
           field("nome", valore); 
@@ -425,7 +425,7 @@ export default function App() {
 
       <div className={`field${errors.telefono ? " err" : ""}`}>
         <label>TELEFONO</label>
-        <input type="tel" placeholder="333 123 4567" value={form.telefono} onChange={e => field("telefono", e.target.value)} />
+        <input type="tel" placeholder="333 123 4567" value={form.telefono} disabled={!form.tipo_pratica} onChange={e => field("telefono", e.target.value)} />
         {errors.telefono && <div className="errmsg">{errors.telefono}</div>}
       </div>
 
@@ -438,6 +438,7 @@ export default function App() {
             type="text"
             placeholder="Es: Panda 1.2"
             value={form.marca}
+            disabled={!form.tipo_pratica}
             onChange={e => field("marca", e.target.value)}
           />
           {errors.marca && <div className="errmsg">{errors.marca}</div>}
@@ -448,6 +449,7 @@ export default function App() {
             type="text"
             placeholder="AA123BB"
             value={form.targa}
+            disabled={!form.tipo_pratica}
             onChange={e => field("targa", e.target.value.toUpperCase())}
             maxLength={7}
             style={{textTransform:"uppercase", letterSpacing:2}}
@@ -463,6 +465,7 @@ export default function App() {
         <textarea
           placeholder="Es: freni che cigolano, spia motore accesa, tagliando, revisione…"
           value={form.problema}
+          disabled={!form.tipo_pratica}
           onChange={e => field("problema", e.target.value)}
         />
         {errors.problema && <div className="errmsg">{errors.problema}</div>}
