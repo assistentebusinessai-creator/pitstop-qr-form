@@ -16,7 +16,7 @@ const css = `
   @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap');
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
-    --bg: #ffff;
+    --bg: #f3f5f7;
     --surface: #1c1c1c;
     --border: #2e2e2e;
     --accent: #e8431a;
