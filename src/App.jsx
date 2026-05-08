@@ -369,7 +369,7 @@ export default function App() {
       <div className="grid2"> 
       <div className={`field${errors.nome ? " err" : ""}`}>
         <label>NOME</label>
-        <input type="text" placeholder="Mario Rossi" value={form.nome} disabled={!form.tipo_pratica} 
+        <input type="text" placeholder="Mario Rossi" value={form.nome} disabled={!form.tipo_pratica} onBlur={() => setTimeout(() => setClientiTrovati([]), 150)}
         onChange={async e => { 
           const valore = e.target.value;
           field("nome", valore); 
@@ -490,6 +490,11 @@ export default function App() {
               window.location.href = "https://assistente-officinaprev.vercel.app";
             }
           }}
+
+          onMouseDown={(e)=>e.currentTarget.style.transform="scale(0.96)"}
+          onMouseUp={(e)=>e.currentTarget.style.transform="scale(1)"}
+          onMouseLeave={(e)=>e.currentTarget.style.transform="scale(1)"}
+
           style={{
             width:92,
             height:52,
@@ -501,8 +506,12 @@ export default function App() {
             letterSpacing:1,
             fontSize:15,
             padding:"0 14px",
-            cursor:"pointer"
+            cursor:"pointer",
+            transition: "all .15s ease",
+            transform: "scale(1)"
           }}
+
+
         >
           CHIUDI
         </button>
