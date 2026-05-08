@@ -366,6 +366,7 @@ export default function App() {
 
       {/* ── NOME ── */}
       <div className="section-head">👤 Anagrafica</div>
+      <div className="grid2"> 
       <div className={`field${errors.nome ? " err" : ""}`}>
         <label>NOME</label>
         <input type="text" placeholder="Mario Rossi" value={form.nome} disabled={!form.tipo_pratica} 
@@ -427,6 +428,7 @@ export default function App() {
         <label>TELEFONO</label>
         <input type="tel" placeholder="333 123 4567" value={form.telefono} disabled={!form.tipo_pratica} onChange={e => field("telefono", e.target.value)} />
         {errors.telefono && <div className="errmsg">{errors.telefono}</div>}
+      </div>
       </div>
 
       {/* ── VEICOLO + TARGA ── */}
