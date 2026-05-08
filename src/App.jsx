@@ -19,10 +19,10 @@ const css = `
     --bg: #f3f5f7;
     --surface: #1c1c1c;
     --border: #2e2e2e;
-    --accent: #e8431a;
+    --accent: #32d074df;
     --text: #f2ede6;
     --muted: #7a7a7a;
-    --green: #43e88a;
+    --green: #43e88b49;
   }
   body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; }
   .app { max-width: 480px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; }
@@ -471,7 +471,40 @@ export default function App() {
         {errors.problema && <div className="errmsg">{errors.problema}</div>}
       </div>
 
-      <button className="submit-btn" onClick={save}>SALVA BOZZA PREVENTIVO →</button>
+      <div style={{display:"flex", gap:12, alignItems:"flex-end"}}>
+        <button
+          className="submit-btn"
+          onClick={save}
+          style={{flex:1}}
+        >
+          SALVA BOZZA →
+        </button>
+
+        <button
+          onClick={() => {
+            if (window.parent && window.parent !== window) {
+              window.parent.postMessage("CHIUDI_FORM_QR", "*");
+            } else {
+              window.location.href = "https://assistente-officinaprev.vercel.app";
+            }
+          }}
+          style={{
+            width:92,
+            height:52,
+            borderRadius:16,
+            border:"2px solid #ff5a1f",
+            background:"#fff",
+            color:"#ff5a1f",
+            fontWeight:700,
+            letterSpacing:1,
+            fontSize:15,
+            padding:"0 14px",
+            cursor:"pointer"
+          }}
+        >
+          CHIUDI
+        </button>
+      </div>
     </div>
   );
 
