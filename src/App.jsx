@@ -546,6 +546,7 @@ export default function App() {
     <>
       <style>{css}</style>
       <div className="app">
+        {/*
         <nav className="nav">
           <div className="nav-brand">
             🔧 DS84
@@ -572,6 +573,7 @@ export default function App() {
             ))}
           </div>
         </nav>
+        */}
         {tab === "qr"      && <QrPage />}
         {tab === "form"    && FormPage()}
         {tab === "history" && <HistoryPage />}
