@@ -87,8 +87,8 @@ const css = `
 
   /* FORM */
   .form-page { flex: 1; padding: 20px 20px 40px; overflow-y: auto; }
-  .page-title { font-family: 'Bebas Neue', sans-serif; font-size: 30px; color: var(--accent); letter-spacing: 2px; }
-  .page-sub { font-size: 12px; color: var(--muted); margin-top: 2px; margin-bottom: 22px; }
+  .page-title { font-family: 'Bebas Neue', sans-serif; font-size: 30px; color: rgb(255, 33, 33); letter-spacing: 2px; }
+  .page-sub { font-size: 12px; color: rgb(0, 0, 0); margin-top: 2px; margin-bottom: 22px; }
   .section-head {
     font-size: 10px; text-transform: uppercase; letter-spacing: 2px;
     color: var(--accent); font-weight: 700; margin: 20px 0 12px;
@@ -97,7 +97,7 @@ const css = `
   .section-head::after { content:''; flex:1; height:1px; background: var(--border); }
   .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .field { margin-bottom: 12px; }
-  .field label { font-size: 11px; color: var(--muted); font-weight: 600; letter-spacing: .5px; display: block; margin-bottom: 6px; }
+  .field label { font-size: 11px; color: rgb(255, 33, 33); font-weight: 600; letter-spacing: .5px; display: block; margin-bottom: 6px; }
   .field input, .field select, .field textarea {
     width: 100%; background: #242424;
     border: 1.5px solid #3a3a3a; border-radius: 12px;
@@ -432,7 +432,7 @@ export default function App() {
       </div>
 
       {/* ── VEICOLO + TARGA ── */}
-      <div className="section-head">🚗 Veicolo</div>
+      {/*<div className="section-head">🚗 Veicolo</div> */}
       <div className="grid2">
         <div className={`field${errors.marca ? " err" : ""}`}>
           <label>VEICOLO</label>
