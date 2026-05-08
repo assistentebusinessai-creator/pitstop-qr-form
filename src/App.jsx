@@ -221,7 +221,7 @@ export default function App() {
     if (!form.nome.trim())     e.nome     = "Obbligatorio";
     //if (!form.telefono.trim()) e.telefono = "Obbligatorio";
     if (!form.marca.trim())    e.marca    = "Obbligatorio";
-    if (!form.targa.trim())    e.targa    = "Obbligatorio";
+    //if (!form.targa.trim())    e.targa    = "Obbligatorio";
     if (!form.problema.trim()) e.problema = "Descrivi il problema";
     setErrors(e);
     return !Object.keys(e).length;
