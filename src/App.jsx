@@ -514,11 +514,11 @@ export default function App() {
         {errors.problema && <div className="errmsg">{errors.problema}</div>}
       </div>
 
-      <div style={{display:"flex", gap:12, alignItems:"flex-end"}}>
+      <div style={{display:"flex", gap:10, alignItems:"stretch", width:"100%", overflow:"hidden"}}>
         <button
           className="submit-btn"
           onClick={save}
-          style={{flex:1}}
+          style={{flex:1, minWidth:0}}
         >
           SALVA NELLE BOZZE 
         </button>
@@ -526,7 +526,7 @@ export default function App() {
         <button
           className="submit-btn"
           onClick={saveAndGenerate}
-          style={{flex:1}}
+          style={{flex:1, minWidth:0}}
         >
           GENERA PREVENTIVO 
         </button>
@@ -545,8 +545,9 @@ export default function App() {
           onMouseLeave={(e)=>e.currentTarget.style.transform="scale(1)"}
 
           style={{
-            width:110,
+            width:92,
             height: 90,
+            flexShrink:0,
             borderRadius:16,
             border:"2px solid #ff5a1f",
             background:"#fff",
