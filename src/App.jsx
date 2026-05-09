@@ -528,7 +528,7 @@ export default function App() {
           onClick={saveAndGenerate}
           style={{flex:1, minWidth:0}}
         >
-          CREA PREVENTIVO 
+          GENERA PREV.
         </button>
 
         <button
