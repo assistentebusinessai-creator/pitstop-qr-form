@@ -304,15 +304,23 @@ export default function App() {
     setLastSaved(entry);
     setScreen("success");
     loadSubs();
+
     
+
+    return entry;
+  }
+
+  async function saveAndGenerate() {
+    const entry = await save();
+
+    if (!entry) return;
+
     if (window.parent && window.parent !== window) {
       window.parent.postMessage({
         type: "GENERA_DA_BOZZA_QR",
         bozzaId: entry.id
       }, "*");
     }
-
-    return entry;
   }
 
   async function del(id, e) {
@@ -489,6 +497,14 @@ export default function App() {
           style={{flex:1}}
         >
           SALVA BOZZA →
+        </button>
+
+        <button
+          className="submit-btn"
+          onClick={saveAndGenerate}
+          style={{flex:1}}
+        >
+          SALVA E GENERA →
         </button>
 
         <button
