@@ -299,11 +299,20 @@ export default function App() {
           tipo_pratica: form.tipo_pratica,
           problema: (form.problema || "").trim(),
         }]);
-      if (error) { console.error(error); return; }
-    } catch (err) { console.error(err); return; }
+      if (error) { console.error(error); return null; }
+    } catch (err) { console.error(err); return null; }
     setLastSaved(entry);
     setScreen("success");
     loadSubs();
+    
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage({
+        type: "GENERA_DA_BOZZA_QR",
+        bozzaId: entry.id
+      }, "*");
+    }
+
+    return entry;
   }
 
   async function del(id, e) {
