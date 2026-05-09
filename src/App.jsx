@@ -284,7 +284,7 @@ export default function App() {
 
         clientId = nuovoCliente.id;
       }
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from("preventivi_bozze")
         .insert([{
           nome:     form.nome,
@@ -298,16 +298,18 @@ export default function App() {
           client_id: clientId,   
           tipo_pratica: form.tipo_pratica,
           problema: (form.problema || "").trim(),
-        }]);
+        }])
+        .select()
+        .single();
       if (error) { console.error(error); return null; }
-    } catch (err) { console.error(err); return null; }
-    setLastSaved(entry);
-    setScreen("success");
-    loadSubs();
-
-    
-
-    return entry;
+      setLastSaved(data);
+      setScreen("success");
+      loadSubs();
+      return data;
+      } catch (err) { 
+        console.error(err);
+        return null; 
+      }
   }
 
   async function saveAndGenerate() {
