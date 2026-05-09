@@ -316,7 +316,7 @@ export default function App() {
     if (!entry) return;
 
     window.location.href =
-      "https://assistente-officinaprev.vercel.app";
+        `https://assistente-officinaprev.vercel.app?generaBozza=${entry.id}`;
     }
 
   async function del(id, e) {
