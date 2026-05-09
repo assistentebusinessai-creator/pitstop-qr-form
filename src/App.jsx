@@ -548,6 +548,7 @@ export default function App() {
             width:92,
             height: 90,
             flexShrink:0,
+            alignSelf:"flex-end",
             borderRadius:16,
             border:"2px solid #ff5a1f",
             background:"#fff",
