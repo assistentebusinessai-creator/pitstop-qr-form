@@ -359,6 +359,32 @@ export default function App() {
       <button className="btn-nuovo" onClick={() => { setForm({...EMPTY}); setErrors({}); setScreen("form"); window.parent.postMessage({ type: "DS84_NUOVO_CLIENTE" }, "*"); }}>
         + NUOVO CLIENTE
       </button>
+
+      <button
+        className="btn-nuovo"
+        onClick={() => {
+          if (window.parent && window.parent !== window) {
+            window.parent.postMessage("CHIUDI_FORM_QR", "*");
+          } else {
+            window.location.href = "https://assistente-officinaprev.vercel.app";
+          }
+        }}
+        style={{ 
+          width:100,
+          height:52,
+          borderRadius:16,
+          border:"2px solid #ff5a1f",
+          background:"#fff",
+          color:"#ff5a1f",
+          fontWeight:700,
+          letterSpacing:1,
+          fontSize:15,
+          cursor:"pointer",
+          marginTop:12
+        }}
+      >
+        CHIUDI
+      </button>
     </div>
   ) : (
     <div className="form-page">
@@ -494,7 +520,7 @@ export default function App() {
           onClick={save}
           style={{flex:1}}
         >
-          SALVA BOZZA →
+          SALVA NELLE BOZZE 
         </button>
 
         <button
@@ -502,7 +528,7 @@ export default function App() {
           onClick={saveAndGenerate}
           style={{flex:1}}
         >
-          SALVA E GENERA →
+          GENERA PREVENTIVO 
         </button>
 
         <button
@@ -519,8 +545,8 @@ export default function App() {
           onMouseLeave={(e)=>e.currentTarget.style.transform="scale(1)"}
 
           style={{
-            width:92,
-            height:52,
+            width:110,
+            height: 90,
             borderRadius:16,
             border:"2px solid #ff5a1f",
             background:"#fff",
@@ -532,6 +558,7 @@ export default function App() {
             cursor:"pointer",
             transition: "all .15s ease",
             transform: "scale(1)"
+            
           }}
 
 
