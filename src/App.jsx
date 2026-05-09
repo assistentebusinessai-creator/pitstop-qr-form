@@ -520,7 +520,7 @@ export default function App() {
           onClick={save}
           style={{flex:1, minWidth:0}}
         >
-          SALVA NELLE BOZZE 
+          SALVA BOZZA
         </button>
 
         <button
@@ -528,7 +528,7 @@ export default function App() {
           onClick={saveAndGenerate}
           style={{flex:1, minWidth:0}}
         >
-          GENERA PREVENTIVO 
+          CREA PREVENTIVO 
         </button>
 
         <button
@@ -545,7 +545,7 @@ export default function App() {
           onMouseLeave={(e)=>e.currentTarget.style.transform="scale(1)"}
 
           style={{
-            width:92,
+            width:110,
             height: 90,
             flexShrink:0,
             alignSelf:"flex-end",
