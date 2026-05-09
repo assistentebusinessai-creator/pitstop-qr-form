@@ -315,13 +315,9 @@ export default function App() {
 
     if (!entry) return;
 
-    if (window.parent && window.parent !== window) {
-      window.parent.postMessage({
-        type: "GENERA_DA_BOZZA_QR",
-        bozzaId: entry.id
-      }, "*");
+    window.location.href =
+      "https://assistente-officinaprev.vercel.app";
     }
-  }
 
   async function del(id, e) {
     e.stopPropagation();
