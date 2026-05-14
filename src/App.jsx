@@ -290,8 +290,8 @@ export default function App() {
           nome:     form.nome,
           cognome:  form.cognome,   // stringa vuota, colonna intatta
           telefono: form.telefono,
-          marca:    form.marca,
-          modello:  form.modello,   // stringa vuota
+          marca:    form.marca.trim() || "VEICOLO NON SPECIFICATO",
+          modello:  form.modello.trim(),   // stringa vuota
           anno:     form.anno,      // stringa vuota
           km:       form.km,        // stringa vuota
           targa:    form.targa,
