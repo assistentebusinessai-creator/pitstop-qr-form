@@ -255,6 +255,7 @@ export default function App() {
     console.log("Clienti trovati:", data);
     setClientiTrovati(data || []);
   }
+  const upper = (v) => (v || "").toString().toUpperCase().trim();
 
   // ── SAVE: identico all'originale, Supabase non cambia ────────────────────
   async function save() {
@@ -269,8 +270,8 @@ export default function App() {
         const { data: nuovoCliente, error: erroreCliente } = await supabase
           .from("clienti")
           .insert([{
-            nome: form.nome,
-            telefono: form.telefono,
+            nome: upper(form.nome),
+            telefono: upper(form.telefono),
             origine: "manuale",
             fiscal_complete: false
           }])
@@ -287,14 +288,14 @@ export default function App() {
       const { data, error } = await supabase
         .from("preventivi_bozze")
         .insert([{
-          nome:     form.nome,
-          cognome:  form.cognome,   // stringa vuota, colonna intatta
-          telefono: form.telefono,
-          marca:    form.marca.trim() || "VEICOLO NON SPECIFICATO",
+          nome: upper(form.nome),
+          cognome: upper(form.cognome),   // stringa vuota, colonna intatta
+          telefono: upper(form.telefono),
+          marca: upper(form.marca.trim() || "VEICOLO NON SPECIFICATO"),
           modello:  form.modello.trim(),   // stringa vuota
           anno:     form.anno,      // stringa vuota
           km:       form.km,        // stringa vuota
-          targa:    form.targa,
+          targa: upper(form.targa),
           client_id: clientId,   
           tipo_pratica: form.tipo_pratica,
           problema: (form.problema || "").trim(),
