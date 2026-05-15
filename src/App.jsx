@@ -213,7 +213,25 @@ export default function App() {
     } catch { setSubs([]); }
   }
 
-  function field(k, v) { setForm(p => ({ ...p, [k]: v })); setErrors(p => ({ ...p, [k]: "" })); }
+  function field(k, v) {
+    const upperKeys = [
+      "nome",
+      "cognome",
+      "telefono",
+      "marca",
+      "modello",
+      "targa",
+      "problema"
+      
+    ];
+
+    const value = upperKeys.includes(k)
+      ? (v || "").toUpperCase()
+      : v;
+
+    setForm(p => ({ ...p, [k]: value }));
+    setErrors(p => ({ ...p, [k]: "" }));
+  }
 
   // ── VALIDAZIONE SEMPLIFICATA (solo i 5 campi visibili) ───────────────────
   function validate() {
@@ -413,7 +431,7 @@ export default function App() {
         <label>NOME</label>
         <input type="text" placeholder="Mario Rossi" value={form.nome} disabled={!form.tipo_pratica} onBlur={() => setTimeout(() => setClientiTrovati([]), 150)}
         onChange={async e => { 
-          const valore = e.target.value;
+          const valore = e.target.value.toUpperCase()
           field("nome", valore); 
           if (!valore.trim()) {
             setClientiTrovati([]);
