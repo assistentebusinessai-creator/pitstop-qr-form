@@ -186,6 +186,8 @@ export default function App() {
   const [tab, setTab] = useState("form");
   const [screen, setScreen] = useState("form");
   const [form, setForm] = useState({ ...EMPTY });
+  const [ascolto, setAscolto] = useState(false);
+
   const [errors, setErrors] = useState({});
   const [clientiTrovati, setClientiTrovati] = useState([]);
   const [clienteSelezionato, setClienteSelezionato] = useState(null);
@@ -426,6 +428,24 @@ export default function App() {
 
       {/* ── NOME ── */}
       <div className="section-head">👤 Anagrafica</div>
+      <button
+        onClick={avviaVoce}
+        disabled={!form.tipo_pratica || ascolto}
+        style={{
+          width: "100%",
+          padding: "12px",
+          marginBottom: "12px",
+          background: ascolto ? "#e53e3e" : "#2d2d2d",
+          color: "white",
+          border: "1px solid #444",
+          borderRadius: "10px",
+          fontSize: "15px",
+          cursor: "pointer"
+        }}
+      >
+        {ascolto ? "🎙️ Sto ascoltando..." : "🎙️ Parla per compilare"}
+      </button>
+
       <div className="grid2"> 
       <div className={`field${errors.nome ? " err" : ""}`}>
         <label>NOME</label>
@@ -623,6 +643,78 @@ export default function App() {
       ))}
     </div>
   );
+  
+  const avviaVoce = () => {
+    if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+      alert("Il tuo browser non supporta il microfono. Usa Chrome.");
+      return;
+    }
+
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const rec = new SR();
+    rec.lang = 'it-IT';
+    rec.continuous = false;
+    rec.interimResults = false;
+
+    setAscolto(true);
+
+    rec.onresult = async (e) => {
+      const testo = e.results[0][0].transcript;
+      setAscolto(false);
+
+      try {
+        const risposta = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`
+          },
+          body: JSON.stringify({
+            model: 'gpt-4o',
+            messages: [
+              {
+                role: 'system',
+                content: `Estrai dal testo i seguenti campi e rispondi SOLO con JSON valido:
+  {
+    "nome": "nome completo cliente o stringa vuota",
+    "telefono": "numero telefono o stringa vuota",
+    "marca": "marca e modello veicolo o stringa vuota",
+    "targa": "targa in formato AA123BB o stringa vuota",
+    "problema": "descrizione problema o stringa vuota",
+    "dettagli_extra": {
+      "km": "chilometri o stringa vuota",
+      "provincia": "provincia o stringa vuota",
+      "anno_immatricolazione": "anno o stringa vuota",
+      "note": "qualsiasi altra info o stringa vuota"
+    }
+  }`
+              },
+              { role: 'user', content: testo }
+            ],
+            temperature: 0.1
+          })
+        });
+
+        const data = await risposta.json();
+        const estratto = JSON.parse(data.choices[0].message.content);
+
+        if (estratto.nome) field("nome", estratto.nome.toUpperCase());
+        if (estratto.telefono) field("telefono", estratto.telefono);
+        if (estratto.marca) field("marca", estratto.marca);
+        if (estratto.targa) field("targa", estratto.targa.toUpperCase());
+        if (estratto.problema) field("problema", estratto.problema);
+
+      } catch (err) {
+        console.error("Errore voce:", err);
+        alert("Errore nell'elaborazione. Riprova.");
+      }
+    };
+
+    rec.onerror = () => setAscolto(false);
+    rec.onend = () => setAscolto(false);
+    rec.start();
+  };
+
 
   return (
     <>
