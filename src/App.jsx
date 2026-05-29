@@ -663,46 +663,29 @@ export default function App() {
       setAscolto(false);
 
       try {
-        const risposta = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
+        const risposta = await fetch('/api/estrai-form', {
+          method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`
+            'Content-Type': 'application/json'
           },
-          body: JSON.stringify({
-            model: 'gpt-4o',
-            messages: [
-              {
-                role: 'system',
-                content: `Estrai dal testo i seguenti campi e rispondi SOLO con JSON valido:
-  {
-    "nome": "nome completo cliente o stringa vuota",
-    "telefono": "numero telefono o stringa vuota",
-    "marca": "marca e modello veicolo o stringa vuota",
-    "targa": "targa in formato AA123BB o stringa vuota",
-    "problema": "descrizione problema o stringa vuota",
-    "dettagli_extra": {
-      "km": "chilometri o stringa vuota",
-      "provincia": "provincia o stringa vuota",
-      "anno_immatricolazione": "anno o stringa vuota",
-      "note": "qualsiasi altra info o stringa vuota"
-    }
-  }`
-              },
-              { role: 'user', content: testo }
-            ],
-            temperature: 0.1
-          })
+          body: JSON.stringify({ testo })
         });
 
-        const data = await risposta.json();
-        const estratto = JSON.parse(data.choices[0].message.content);
+        const estratto = await risposta.json();
+
+        if (!risposta.ok) {
+          throw new Error(estratto.error || "Errore estrazione");
+        }
 
         if (estratto.nome) field("nome", estratto.nome.toUpperCase());
         if (estratto.telefono) field("telefono", estratto.telefono);
         if (estratto.marca) field("marca", estratto.marca);
         if (estratto.targa) field("targa", estratto.targa.toUpperCase());
         if (estratto.problema) field("problema", estratto.problema);
+        if (estratto.cognome) field("cognome", estratto.cognome);
+        if (estratto.modello) field("modello", estratto.modello);
+        if (estratto.anno) field("anno", estratto.anno);
+        if (estratto.chilometri) field("km", estratto.chilometri);
 
       } catch (err) {
         console.error("Errore voce:", err);
