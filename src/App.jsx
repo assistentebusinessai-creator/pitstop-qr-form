@@ -686,7 +686,7 @@ export default function App() {
         if (estratto.cognome) field("cognome", estratto.cognome);
         if (estratto.modello) field("modello", estratto.modello);
         if (estratto.anno) field("anno", estratto.anno);
-        if (estratto.chilometri) field("km", estratto.chilometri);
+        if (estratto.km) field("km", estratto.km);
 
       } catch (err) {
         console.error("Errore voce:", err);
@@ -694,9 +694,25 @@ export default function App() {
       }
     };
 
-    rec.onerror = () => setAscolto(false);
+    rec.onerror = (e) => {
+      setAscolto(false);
+      console.error("Errore riconoscimento vocale:", e);
+      alert("Errore microfono: " + (e.error || "sconosciuto"));
+    };
     rec.onend = () => setAscolto(false);
-    rec.start();
+    try {
+
+      rec.start();
+
+    } catch (err) {
+
+      setAscolto(false);
+
+      console.error("Errore start microfono:", err);
+
+      alert("Il microfono non è partito. Riprova chiudendo e riaprendo la pagina.");
+
+    }
   };
 
 
