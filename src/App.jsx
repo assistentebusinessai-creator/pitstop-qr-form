@@ -645,6 +645,7 @@ export default function App() {
   );
   
   const avviaVoce = () => {
+    alert("click");
     if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
       alert("Il tuo browser non supporta il microfono. Usa Chrome.");
       return;
