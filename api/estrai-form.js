@@ -35,7 +35,7 @@ Formato obbligatorio:
   "targa": "",
   "problema": "",
   "anno": "",
-  "chilometri": ""
+  "km": ""
 }
 
 Regole:
@@ -45,7 +45,7 @@ Regole:
 - "modello" deve contenere modello/cilindrata se presenti.
 - "problema" deve contenere solo il lavoro o problema richiesto.
 - "anno" deve contenere anno o data immatricolazione se detta.
-- "chilometri" deve contenere solo il numero dei km se detto.
+- "km" deve contenere solo il numero dei km se detto.
 - Targa in maiuscolo senza spazi.`
         },
         { role: "user", content: testo }
