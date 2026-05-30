@@ -654,7 +654,7 @@ export default function App() {
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     const rec = new SR();
     rec.lang = 'it-IT';
-    rec.continuous = false;
+    rec.continuous = true;
     rec.interimResults = false;
 
     setAscolto(true);
