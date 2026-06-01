@@ -687,7 +687,14 @@ export default function App() {
         if (estratto.modello) field("modello", estratto.modello);
         if (estratto.anno) field("anno", estratto.anno);
         if (estratto.km) field("km", estratto.km);
-
+        if (estratto.via) field("via", estratto.via.toUpperCase());
+        if (estratto.cap) field("cap", estratto.cap);
+        if (estratto.localita) field("localita", estratto.localita.toUpperCase());
+        if (estratto.provincia) field("provincia", estratto.provincia.toUpperCase().slice(0, 2));
+        if (estratto.email) field("email", estratto.email);
+        if (estratto.cf_piva) field("cf_piva", estratto.cf_piva.toUpperCase());
+        
+        if (estratto.data_immatricolazione) field("data_immatricolazione", estratto.data_immatricolazione);
       } catch (err) {
         console.error("Errore voce:", err);
         alert("Errore nell'elaborazione. Riprova.");
