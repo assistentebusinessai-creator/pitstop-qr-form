@@ -3,7 +3,26 @@ import { supabase } from "./supabaseClient";
 
 // cognome/modello/anno/km rimangono nello stato ma non vengono mostrati
 // → Supabase riceve sempre tutti i campi, nessuna colonna si rompe
-const EMPTY = { nome:"", cognome:"", telefono:"", marca:"", modello:"", anno:"", km:"", targa:"", problema:"", cliente_id:null, tipo_pratica:"" };
+const EMPTY = { 
+   nome:"",
+   cognome:"",
+   telefono:"",
+   marca:"",
+   modello:"",
+   km:"",
+   targa:"",
+   problema:"",
+   cliente_id:null,
+   tipo_pratica:"",
+   via:"",
+   cap:"",
+   localita:"",
+   provincia:"",
+   email:"",
+   cf_piva:"",
+   data_immatricolazione:""
+  
+};
 
 function fmt(ts) {
   return new Date(ts).toLocaleString("it-IT", {
