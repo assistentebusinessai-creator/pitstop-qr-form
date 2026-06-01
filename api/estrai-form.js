@@ -50,12 +50,21 @@ Regole:
 - "marca" deve contenere solo la marca se chiara.
 - "via" deve contenere solo l'indirizzo se detto.
 - "cap" deve contenere solo il CAP se detto.
-- "localita" deve contenere la città/località se detta.
 - "provincia" deve contenere solo la sigla provincia (es. TO, MI, RM).
 - "email" deve contenere solo l'indirizzo email se detto.
 - "cf_piva" deve contenere solo codice fiscale o partita IVA se detti.
 - "km" deve contenere solo il numero dei chilometri se detto.
 - "data_immatricolazione" deve contenere la data di immatricolazione se detta.
+- - Se senti parole come "immatricolata", "immatricolazione", "data immatricolazione", devi compilare SEMPRE "data_immatricolazione".
+- Esempi:
+  "immatricolata 2018" → "data_immatricolazione": "2018"
+  "immatricolata maggio 2018" → "data_immatricolazione": "05/2018"
+  "immatricolata il primo maggio 2018" → "data_immatricolazione": "1/5/2018"
+- "localita" deve contenere la città/località se detta.
+- Esempi:
+  "a Torino" → "localita": "TORINO"
+  "di Rivoli" → "localita": "RIVOLI"
+  "cliente di Moncalieri" → "localita": "MONCALIERI"
 - "modello" deve contenere modello/cilindrata se presenti.
 - "problema" deve contenere solo il lavoro o problema richiesto.
 - "km" deve contenere solo il numero dei chilometri se detto.
