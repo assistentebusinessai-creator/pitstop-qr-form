@@ -242,7 +242,12 @@ export default function App() {
       "marca",
       "modello",
       "targa",
-      "problema"
+      "problema",
+      "via",
+      "cap",
+      "localita",
+      "provincia",
+      "cf_piva"
       
     ];
 
