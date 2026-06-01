@@ -315,6 +315,13 @@ export default function App() {
           modello:  form.modello.trim(),   // stringa vuota
           anno:     form.anno,      // stringa vuota
           km:       form.km,        // stringa vuota
+          via: upper(form.via),
+          cap: upper(form.cap),
+          localita: upper(form.localita),
+          provincia: upper((form.provincia || "").slice(0, 2)),
+          email: form.email || "",
+          cf_piva: upper(form.cf_piva),
+          data_immatricolazione: form.data_immatricolazione || "",
           targa: upper(form.targa),
           client_id: clientId,   
           tipo_pratica: form.tipo_pratica,
