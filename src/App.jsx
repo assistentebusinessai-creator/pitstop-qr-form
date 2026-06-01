@@ -685,7 +685,6 @@ export default function App() {
         if (estratto.problema) field("problema", estratto.problema);
         if (estratto.cognome) field("cognome", estratto.cognome);
         if (estratto.modello) field("modello", estratto.modello);
-        if (estratto.anno) field("anno", estratto.anno);
         if (estratto.km) field("km", estratto.km);
         if (estratto.via) field("via", estratto.via.toUpperCase());
         if (estratto.cap) field("cap", estratto.cap);
