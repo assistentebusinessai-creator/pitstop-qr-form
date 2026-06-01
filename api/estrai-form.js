@@ -41,7 +41,6 @@ Formato obbligatorio:
   "email": "",
   "cf_piva": "",
   "km": "",
-  "anno": "",
   "data_immatricolazione": ""
 }
 
@@ -59,7 +58,6 @@ Regole:
 - "data_immatricolazione" deve contenere la data di immatricolazione se detta.
 - "modello" deve contenere modello/cilindrata se presenti.
 - "problema" deve contenere solo il lavoro o problema richiesto.
-- "anno" deve contenere anno o data immatricolazione se detta.
 - "km" deve contenere solo il numero dei chilometri se detto.
 - Targa in maiuscolo senza spazi.`
         },
