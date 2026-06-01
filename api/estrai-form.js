@@ -55,11 +55,13 @@ Regole:
 - "cf_piva" deve contenere solo codice fiscale o partita IVA se detti.
 - "km" deve contenere solo il numero dei chilometri se detto.
 - "data_immatricolazione" deve contenere la data di immatricolazione se detta.
-- - Se senti parole come "immatricolata", "immatricolazione", "data immatricolazione", devi compilare SEMPRE "data_immatricolazione".
+- Se senti parole come "immatricolata", "immatricolazione", "data immatricolazione", devi compilare SEMPRE "data_immatricolazione".
 - Esempi:
   "immatricolata 2018" → "data_immatricolazione": "2018"
   "immatricolata maggio 2018" → "data_immatricolazione": "05/2018"
   "immatricolata il primo maggio 2018" → "data_immatricolazione": "1/5/2018"
+- NON inserire la data di immatricolazione in altri campi.
+- Se viene detta una data di immatricolazione, compilare SOLO "data_immatricolazione".
 - "localita" deve contenere la città/località se detta.
 - Esempi:
   "a Torino" → "localita": "TORINO"
