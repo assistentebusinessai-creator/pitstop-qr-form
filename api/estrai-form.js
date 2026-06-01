@@ -34,14 +34,29 @@ Formato obbligatorio:
   "modello": "",
   "targa": "",
   "problema": "",
+  "via": "",
+  "cap": "",
+  "localita": "",
+  "provincia": "",
+  "email": "",
+  "cf_piva": "",
+  "km": "",
   "anno": "",
-  "km": ""
+  "data_immatricolazione": ""
 }
 
 Regole:
 - Non inventare dati mancanti.
 - Se un dato non è presente, lascia stringa vuota.
 - "marca" deve contenere solo la marca se chiara.
+- "via" deve contenere solo l'indirizzo se detto.
+- "cap" deve contenere solo il CAP se detto.
+- "localita" deve contenere la città/località se detta.
+- "provincia" deve contenere solo la sigla provincia (es. TO, MI, RM).
+- "email" deve contenere solo l'indirizzo email se detto.
+- "cf_piva" deve contenere solo codice fiscale o partita IVA se detti.
+- "km" deve contenere solo il numero dei chilometri se detto.
+- "data_immatricolazione" deve contenere la data di immatricolazione se detta.
 - "modello" deve contenere modello/cilindrata se presenti.
 - "problema" deve contenere solo il lavoro o problema richiesto.
 - "anno" deve contenere anno o data immatricolazione se detta.
