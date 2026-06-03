@@ -217,6 +217,7 @@ export default function App() {
   const [expanded, setExpanded] = useState(null);
   const [qrSrc, setQrSrc] = useState("");
   const [showExit, setShowExit] = useState(false);
+  const [elaborandoVoce, setElaborandoVoce] = useState(false);
 
   useEffect(() => {
     const url = window.location.href.split("?")[0];
@@ -463,7 +464,7 @@ export default function App() {
       <div className="section-head">👤 Anagrafica</div>
       <button
         onClick={avviaVoce}
-        disabled={!form.tipo_pratica}
+        disabled={!form.tipo_pratica || elaborandoVoce}
         style={{
           width: "100%",
           padding: "12px",
@@ -476,7 +477,11 @@ export default function App() {
           cursor: "pointer"
         }}
       >
-        {ascolto ? "🛑 Ferma e compila" : "🎙️ Parla per compilare"}
+        {elaborandoVoce
+           ? "⏳ Sto elaborando..."
+            : ascolto
+              ? "🛑 Ferma e compila" 
+              : "🎙️ Parla per compilare"}
       </button>
 
       <div className="grid2"> 
@@ -728,6 +733,7 @@ export default function App() {
       setAscolto(false);
 
       if (!testo) return;
+      setElaborandoVoce(true);
 
       try {
         const risposta = await fetch('/api/estrai-form', {
@@ -768,6 +774,8 @@ export default function App() {
       } catch (err) {
         console.error("Errore voce:", err);
         alert("Errore nell'elaborazione. Riprova.");
+      } finally {
+        setElaborandoVoce(false);
       }
     };
 
