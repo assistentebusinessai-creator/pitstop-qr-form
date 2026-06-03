@@ -706,17 +706,13 @@ export default function App() {
     setAscolto(true);
 
     rec.onresult = (e) => {
-      let pezzi = [];
+      let testoCompleto = "";
 
-      for (let i = e.resultIndex; i < e.results.length; i++) {
-        if (e.results[i].isFinal) {
-          pezzi.push(e.results[i][0].transcript);
-        }
+      for (let i = 0; i < e.results.length; i++) {
+        testoCompleto += " " + e.results[i][0].transcript;
       }
 
-      if (pezzi.length > 0) {
-        testoVoceRef.current += " " + pezzi.join(" ");
-      }
+      testoVoceRef.current = testoCompleto.trim();
     };
 
     rec.onerror = (e) => {
