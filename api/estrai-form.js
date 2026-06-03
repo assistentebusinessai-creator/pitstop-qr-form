@@ -47,11 +47,13 @@ Formato obbligatorio:
 Regole:
 - Non inventare dati mancanti.
 - Se un dato non è presente, lascia stringa vuota.
+- "nome" deve contenere il nome completo del cliente, nome e cognome insieme, es. "Mario Rossi".
+- "cognome" può essere lasciato vuoto se il nome completo è già in "nome".
+- Se senti "Mario Rossi" NON mettere solo "Mario": metti "Mario Rossi" in "nome"
 - "marca" deve contenere solo la marca se chiara.
-- "via" deve contenere solo l'indirizzo se detto.
-- "cap" deve contenere solo il CAP se detto.
+- "cap" deve contenere il CAP se dettato.
 - "provincia" deve contenere solo la sigla provincia (es. TO, MI, RM).
-- "email" deve contenere solo l'indirizzo email se detto.
+- "email" deve contenere l'indirizzo email se viene dettato.
 - "cf_piva" deve contenere solo codice fiscale o partita IVA se detti.
 - "km" deve contenere solo il numero dei chilometri se detto.
 - "data_immatricolazione" deve contenere la data di immatricolazione se detta.
