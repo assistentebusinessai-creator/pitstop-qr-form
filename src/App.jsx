@@ -715,7 +715,11 @@ export default function App() {
         if (estratto.targa) field("targa", estratto.targa.toUpperCase());
         if (estratto.problema) field("problema", estratto.problema);
         if (estratto.cognome) field("cognome", estratto.cognome);
-        if (estratto.modello) field("modello", estratto.modello);
+        if (estratto.modello) {
+          field("marca", estratto.modello);
+        } else if (estratto.marca) {
+          field("marca", estratto.marca);
+        }
         if (estratto.km) field("km", estratto.km);
         if (estratto.via) field("via", estratto.via.toUpperCase());
         if (estratto.cap) field("cap", estratto.cap);
