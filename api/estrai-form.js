@@ -67,7 +67,33 @@ Regole:
   "a Torino" → "localita": "TORINO"
   "di Rivoli" → "localita": "RIVOLI"
   "cliente di Moncalieri" → "localita": "MONCALIERI"
+- "via" deve contenere l'indirizzo stradale se detto.
+  Esempi:
+  "via Roma 15" → "via": "VIA ROMA 15"
+  "corso Francia 22" → "via": "CORSO FRANCIA 22"
+  "strada del Drosso 40" → "via": "STRADA DEL DROSSO 40"
+
+- "provincia" deve contenere SOLO la sigla di 2 lettere se detta.
+  Esempi:
+  "provincia Torino" → "provincia": "TO"
+  "provincia TO" → "provincia": "TO"
+  "Torino provincia TO" → "provincia": "TO"
+
+- "cf_piva" deve contenere codice fiscale o partita IVA se detta.
+  Esempi:
+  "partita IVA 12345678901" → "cf_piva": "12345678901"
+  "P IVA 12345678901" → "cf_piva": "12345678901"
+  "codice fiscale RSSMRA80A01L219U" → "cf_piva": "RSSMRA80A01L219U"
 - "modello" deve contenere modello/cilindrata se presenti.
+- Se nel modello compare un numero improbabile tipo 10002, 1002, 12000 vicino a parole come Panda, Punto, Fiesta, Golf, interpretalo come cilindrata 1.2 o 1200 solo se coerente con la frase.
+
+- Esempi:
+
+  "Fiat Panda mille due" → "marca": "FIAT", "modello": "PANDA 1.2"
+
+  "Fiat Panda 1200" → "marca": "FIAT", "modello": "PANDA 1.2"
+
+  "Fiat Panda 10002" → "marca": "FIAT", "modello": "PANDA 1.2"
 - "problema" deve contenere solo il lavoro o problema richiesto.
 - "km" deve contenere solo il numero dei chilometri se detto.
 - Targa in maiuscolo senza spazi.`
