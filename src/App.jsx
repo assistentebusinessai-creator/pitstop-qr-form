@@ -207,6 +207,7 @@ export default function App() {
   const [form, setForm] = useState({ ...EMPTY });
   const [ascolto, setAscolto] = useState(false);
   const recRef = useRef(null);
+  const testoVoceRef = useRef("");
 
   const [errors, setErrors] = useState({});
   const [clientiTrovati, setClientiTrovati] = useState([]);
@@ -676,30 +677,57 @@ export default function App() {
     </div>
   );
   
-  const avviaVoce = () => {
+  const avviaVoce = async () => {
     if (ascolto && recRef.current) {
       recRef.current.stop();
-      recRef.current = null;
-      setAscolto(false);
       return;
     }
+
     if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
-      alert("Il tuo browser non supporta il microfono. Usa Chrome.");
+      alert("Il tuo browser non supporta il microfono. Usa Safari su iPhone o Chrome su PC.");
       return;
     }
 
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     const rec = new SR();
+
     recRef.current = rec;
+    testoVoceRef.current = "";
+
     rec.lang = 'it-IT';
     rec.continuous = true;
     rec.interimResults = false;
 
     setAscolto(true);
 
-    rec.onresult = async (e) => {
-      const testo = e.results[0][0].transcript;
+    rec.onresult = (e) => {
+      let pezzi = [];
+
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        if (e.results[i].isFinal) {
+          pezzi.push(e.results[i][0].transcript);
+        }
+      }
+
+      if (pezzi.length > 0) {
+        testoVoceRef.current += " " + pezzi.join(" ");
+      }
+    };
+
+    rec.onerror = (e) => {
       setAscolto(false);
+      recRef.current = null;
+      console.error("Errore riconoscimento vocale:", e);
+      alert("Errore microfono: " + (e.error || "sconosciuto"));
+    };
+
+    rec.onend = async () => {
+      const testo = testoVoceRef.current.trim();
+
+      recRef.current = null;
+      setAscolto(false);
+
+      if (!testo) return;
 
       try {
         const risposta = await fetch('/api/estrai-form', {
@@ -718,15 +746,16 @@ export default function App() {
 
         if (estratto.nome) field("nome", estratto.nome.toUpperCase());
         if (estratto.telefono) field("telefono", estratto.telefono);
-        if (estratto.marca) field("marca", estratto.marca);
-        if (estratto.targa) field("targa", estratto.targa.toUpperCase());
-        if (estratto.problema) field("problema", estratto.problema);
-        if (estratto.cognome) field("cognome", estratto.cognome);
+
         if (estratto.modello) {
           field("marca", estratto.modello);
         } else if (estratto.marca) {
           field("marca", estratto.marca);
         }
+
+        if (estratto.targa) field("targa", estratto.targa.toUpperCase());
+        if (estratto.problema) field("problema", estratto.problema);
+        if (estratto.cognome) field("cognome", estratto.cognome);
         if (estratto.km) field("km", estratto.km);
         if (estratto.via) field("via", estratto.via.toUpperCase());
         if (estratto.cap) field("cap", estratto.cap);
@@ -734,35 +763,21 @@ export default function App() {
         if (estratto.provincia) field("provincia", estratto.provincia.toUpperCase().slice(0, 2));
         if (estratto.email) field("email", estratto.email);
         if (estratto.cf_piva) field("cf_piva", estratto.cf_piva.toUpperCase());
-        
         if (estratto.data_immatricolazione) field("data_immatricolazione", estratto.data_immatricolazione);
+
       } catch (err) {
         console.error("Errore voce:", err);
         alert("Errore nell'elaborazione. Riprova.");
       }
     };
 
-    rec.onerror = (e) => {
-      setAscolto(false);
-      console.error("Errore riconoscimento vocale:", e);
-      alert("Errore microfono: " + (e.error || "sconosciuto"));
-    };
-    rec.onend = () => {
-      recRef.current = null;
-      setAscolto(false);
-    };
     try {
-
       rec.start();
-
     } catch (err) {
-
       setAscolto(false);
-
+      recRef.current = null;
       console.error("Errore start microfono:", err);
-
       alert("Il microfono non è partito. Riprova chiudendo e riaprendo la pagina.");
-
     }
   };
 
