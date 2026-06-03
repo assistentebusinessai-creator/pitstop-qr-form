@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { supabase } from "./supabaseClient";
 
 // cognome/modello/anno/km rimangono nello stato ma non vengono mostrati
@@ -206,6 +206,7 @@ export default function App() {
   const [screen, setScreen] = useState("form");
   const [form, setForm] = useState({ ...EMPTY });
   const [ascolto, setAscolto] = useState(false);
+  const recRef = useRef(null);
 
   const [errors, setErrors] = useState({});
   const [clientiTrovati, setClientiTrovati] = useState([]);
@@ -474,7 +475,7 @@ export default function App() {
           cursor: "pointer"
         }}
       >
-        {ascolto ? "🎙️ Sto ascoltando..." : "🎙️ Parla per compilare"}
+        {ascolto ? "🛑 Ferma e compila" : "🎙️ Parla per compilare"}
       </button>
 
       <div className="grid2"> 
@@ -676,7 +677,12 @@ export default function App() {
   );
   
   const avviaVoce = () => {
-    alert("click");
+    if (ascolto && recRef.current) {
+      recRef.current.stop();
+      recRef.current = null;
+      setAscolto(false);
+      return;
+    }
     if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
       alert("Il tuo browser non supporta il microfono. Usa Chrome.");
       return;
@@ -684,6 +690,7 @@ export default function App() {
 
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     const rec = new SR();
+    recRef.current = rec;
     rec.lang = 'it-IT';
     rec.continuous = true;
     rec.interimResults = false;
@@ -740,7 +747,10 @@ export default function App() {
       console.error("Errore riconoscimento vocale:", e);
       alert("Errore microfono: " + (e.error || "sconosciuto"));
     };
-    rec.onend = () => setAscolto(false);
+    rec.onend = () => {
+      recRef.current = null;
+      setAscolto(false);
+    };
     try {
 
       rec.start();
