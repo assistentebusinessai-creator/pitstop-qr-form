@@ -463,7 +463,7 @@ export default function App() {
       <div className="section-head">👤 Anagrafica</div>
       <button
         onClick={avviaVoce}
-        disabled={!form.tipo_pratica || ascolto}
+        disabled={!form.tipo_pratica}
         style={{
           width: "100%",
           padding: "12px",
