@@ -311,6 +311,10 @@ export default function App() {
   async function save() {
     if (!validate()) return;
     const ts = Date.now();
+    
+    const demoId =
+      new URLSearchParams(window.location.search).get("demo") ||
+      "demo-generale";
     const entry = { ...form, ts, id: `req:${ts}` };
     try {
       let clientId = form.cliente_id;
@@ -353,7 +357,8 @@ export default function App() {
           cf_piva: upper(form.cf_piva),
           data_immatricolazione: form.data_immatricolazione || "",
           targa: upper(form.targa),
-          client_id: clientId,   
+          client_id: clientId,  
+          demo_id: demoId, 
           tipo_pratica: form.tipo_pratica,
           problema: (form.problema || "").trim(),
         }])
