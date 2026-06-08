@@ -275,6 +275,9 @@ export default function App() {
   }
   
   async function cercaCliente(valore) {
+    setClientiTrovati([]);
+    return;
+    
     console.log("cerca cliente partita:", valore);
     const query = (valore || "").trim();
     setClientiTrovati([]);
