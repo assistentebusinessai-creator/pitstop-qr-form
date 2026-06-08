@@ -314,7 +314,10 @@ export default function App() {
     
     const demoId =
       new URLSearchParams(window.location.search).get("demo") ||
+      localStorage.getItem("pitstop_demo_id") ||
       "demo-generale";
+
+    localStorage.setItem("pitstop_demo_id", demoId);
     const entry = { ...form, ts, id: `req:${ts}`, demo_id: demoId };
     try {
       let clientId = form.cliente_id;
