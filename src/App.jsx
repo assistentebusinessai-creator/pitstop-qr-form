@@ -13,7 +13,7 @@ const EMPTY = {
    targa:"",
    problema:"",
    cliente_id:null,
-   tipo_pratica:"",
+   tipo_pratica:"semplice",
    via:"",
    cap:"",
    localita:"",
