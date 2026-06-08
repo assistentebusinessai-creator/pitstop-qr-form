@@ -385,7 +385,7 @@ export default function App() {
     if (!entry) return;
 
     window.location.href =
-        `https://pitstop-demo-2.vercel.app?generaBozza=${entry.id}`;
+        `https://pitstop-demo-2.vercel.app?generaBozza=${entry.id}&demo=${encodeURIComponent(demoId)}`;
     }
 
   async function del(id, e) {
@@ -625,7 +625,7 @@ export default function App() {
             if (window.parent && window.parent !== window) {
               window.parent.postMessage("CHIUDI_FORM_QR", "*");
             } else {
-              window.location.href = "https://pitstop-demo-2.vercel.app";
+              window.location.href = `https://pitstop-demo-2.vercel.app/?demo=${encodeURIComponent(demoId)}`;
             }
           }}
 
