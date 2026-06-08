@@ -328,7 +328,7 @@ export default function App() {
             telefono: upper(form.telefono),
             origine: "manuale",
             fiscal_complete: false,
-            dem_id: demoId
+            demo_id: demoId
           }])
           .select()
           .single();
