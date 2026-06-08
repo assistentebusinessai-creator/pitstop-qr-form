@@ -421,7 +421,7 @@ export default function App() {
           if (window.parent && window.parent !== window) {
             window.parent.postMessage("CHIUDI_FORM_QR", "*");
           } else {
-            window.location.href = "https://assistente-officinaprev.vercel.app";
+            window.location.href = "https://pitstop-demo-2.vercel.app";
           }
         }}
         style={{ 
@@ -613,7 +613,7 @@ export default function App() {
             if (window.parent && window.parent !== window) {
               window.parent.postMessage("CHIUDI_FORM_QR", "*");
             } else {
-              window.location.href = "https://assistente-officinaprev.vercel.app";
+              window.location.href = "https://pitstop-demo-2.vercel.app";
             }
           }}
 
