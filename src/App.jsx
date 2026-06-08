@@ -315,7 +315,7 @@ export default function App() {
     const demoId =
       new URLSearchParams(window.location.search).get("demo") ||
       "demo-generale";
-    const entry = { ...form, ts, id: `req:${ts}` };
+    const entry = { ...form, ts, id: `req:${ts}`, demo_id: demoId };
     try {
       let clientId = form.cliente_id;
 
@@ -327,7 +327,8 @@ export default function App() {
             nome: upper(form.nome),
             telefono: upper(form.telefono),
             origine: "manuale",
-            fiscal_complete: false
+            fiscal_complete: false,
+            dem_id: demoId
           }])
           .select()
           .single();
