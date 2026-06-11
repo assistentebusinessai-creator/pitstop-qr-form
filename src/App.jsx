@@ -383,9 +383,13 @@ export default function App() {
 
     if (!entry) return;
 
+    const params = new URLSearchParams(window.location.search);
+    const demoId = params.get("demo") || localStorage.getItem("pitstop_demo_id") || "demo-generale";
+    const tour = localStorage.getItem("pitstop_tour") === "1" ? "&tour=1" : "";
+
     window.location.href =
-        `https://pitstop-demo-2.vercel.app?generaBozza=${entry.id}`;
-    }
+      `https://pitstop-demo-2.vercel.app?demo=${encodeURIComponent(demoId)}&generaBozza=${entry.id}${tour}`;
+  }
 
   async function del(id, e) {
     e.stopPropagation();
