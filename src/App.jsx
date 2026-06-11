@@ -245,7 +245,6 @@ export default function App() {
       "marca",
       "modello",
       "targa",
-      "problema",
       "via",
       "cap",
       "localita",
