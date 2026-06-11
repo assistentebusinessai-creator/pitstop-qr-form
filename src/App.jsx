@@ -8,7 +8,7 @@ const EMPTY = {
    cognome:"",
    telefono:"",
    marca:"",
-   modello:"",
+   modello:"", 
    km:"",
    targa:"",
    problema:"",
