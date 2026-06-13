@@ -218,11 +218,45 @@ export default function App() {
   const [qrSrc, setQrSrc] = useState("");
   const [showExit, setShowExit] = useState(false);
   const [elaborandoVoce, setElaborandoVoce] = useState(false);
+  const [showTourChoice, setShowTourChoice] = useState(false);
+  const [isTourMode, setIsTourMode] = useState(false);
+  const [tourStep, setTourStep] = useState(1);
+
+  useEffect(() => {
+    const bloccaScroll =
+      isTourMode &&
+      !showTourChoice &&
+      tourStep > 0;
+
+    if (bloccaScroll) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isTourMode, showTourChoice, tourStep]);
+
+
 
   useEffect(() => {
     const url = window.location.href.split("?")[0];
     setQrSrc(`https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=${encodeURIComponent(url)}&color=111111&bgcolor=ffffff&margin=14`);
     loadSubs();
+    const params = new URLSearchParams(window.location.search);
+    const demoId = params.get("demo");
+    const tourSaved = localStorage.getItem("pitstop_tour");
+
+    if (demoId && tourSaved === null) {
+      setShowTourChoice(true);
+    }
+
+    if (tourSaved === "1") {
+      setIsTourMode(true);
+    }
+
   }, []);
 
   async function loadSubs() {
@@ -238,6 +272,9 @@ export default function App() {
   }
 
   function field(k, v) {
+    if (isTourMode && tourStep === 1) {
+      setTourStep(0);
+    }
     const upperKeys = [
       "nome",
       "cognome",
@@ -330,7 +367,6 @@ export default function App() {
             telefono: upper(form.telefono),
             origine: "manuale",
             fiscal_complete: false,
-            demo_id: demoId
           }])
           .select()
           .single();
@@ -388,8 +424,8 @@ export default function App() {
     const tour = localStorage.getItem("pitstop_tour") === "1" ? "&tour=1" : "";
 
     window.location.href =
-      `https://pitstop-demo-2.vercel.app?demo=${encodeURIComponent(demoId)}&generaBozza=${entry.id}${tour}`;
-  }
+        `https://pitstop-demo-2.vercel.app?generaBozza=${entry.id}`;
+    }
 
   async function del(id, e) {
     e.stopPropagation();
@@ -489,7 +525,8 @@ export default function App() {
           border: "1px solid #444",
           borderRadius: "10px",
           fontSize: "15px",
-          cursor: "pointer"
+          cursor: "pointer",
+          
         }}
       >
         {elaborandoVoce
@@ -700,6 +737,10 @@ export default function App() {
   const avviaVoce = async () => {
     if (ascolto && recRef.current) {
       recRef.current.stop();
+
+      if (isTourMode) {
+        setTourStep(2);
+      }
       return;
     }
 
@@ -713,6 +754,10 @@ export default function App() {
 
     recRef.current = rec;
     testoVoceRef.current = "";
+    if (isTourMode && tourStep === 1) {
+      setTourStep(0);
+    }
+
 
     rec.lang = 'it-IT';
     rec.continuous = true;
@@ -838,6 +883,270 @@ export default function App() {
         {tab === "history" && <HistoryPage />}
       </div>
 
+
+      {showTourChoice && (
+        <div style={{
+          position:"fixed",
+          top:0,
+          left:0,
+          width:"100%",
+          height:"100%",
+          background:"rgba(0,0,0,0.72)",
+          display:"flex",
+          alignItems:"center",
+          justifyContent:"center",
+          zIndex:1000,
+          padding:20
+        }}>
+          <div style={{
+            background:"#111",
+            color:"#fff",
+            padding:"26px 22px",
+            borderRadius:18,
+            width:"100%",
+            maxWidth:380,
+            textAlign:"center",
+            boxShadow:"0 18px 45px rgba(0,0,0,0.45)",
+            border:"1px solid rgba(255,255,255,0.12)"
+          }}>
+            <div style={{fontSize:34, marginBottom:10}}>⚡</div>
+
+            <h2 style={{margin:"0 0 10px", fontSize:24, color:"#ffcc00"}}>
+              BENVENUTO IN PITSTOP
+            </h2>
+
+            <p style={{margin:"0 0 22px", color:"#ddd", fontSize:15, lineHeight:1.4}}>
+              Vuoi essere guidato passo passo oppure provare liberamente la demo?
+            </p>
+
+            <button
+              onClick={() => {
+                localStorage.setItem("pitstop_tour", "1");
+                setIsTourMode(true);
+                setTourStep(1);
+                setShowTourChoice(false);
+              }}
+               style={{
+                width:"100%",
+                padding:"14px",
+                borderRadius:12,
+                border:"none",
+                background:"#ffcc00",
+                color:"#000",
+                fontWeight:900,
+                fontSize:15,
+                cursor:"pointer",
+                marginBottom:10
+              }}
+            >
+              TOUR GUIDATO
+            </button>
+
+            <button
+              onClick={() => {
+                localStorage.setItem("pitstop_tour", "0");
+                setIsTourMode(false);
+                setShowTourChoice(false);
+              }}
+              style={{
+                width:"100%",
+                padding:"13px",
+                borderRadius:12,
+                border:"1px solid rgba(255,255,255,0.25)",
+                background:"transparent",
+                color:"#fff",
+                fontWeight:800,
+                fontSize:14,
+                cursor:"pointer"
+              }}
+            >
+              PROVA LIBERA
+            </button>
+          </div>
+        </div>
+      )}
+
+      {isTourMode && tourStep === 1 && !showTourChoice && (
+        <>
+    <div
+      style={{
+        position:"fixed",
+        inset:0,
+        background:"rgba(0,0,0,0.72)",
+        zIndex:999
+      }}
+    />
+        <div style={{
+          position:"fixed",
+          top:17,
+          left:"50%",
+          transform:"translateX(-50%)",
+          zIndex:1000,
+          width:"min(380px, calc(100% - 30px))",
+          borderRadius:14,
+          background:"rgba(17,17,17,0.78)",
+          backdropFilter:"blur(6px)",
+          padding:"22px",
+          border:"1px solid rgba(255,204,0,0.22)",
+          boxShadow:"0 8px 24px rgba(0,0,0,0.22)",
+        }}>
+
+          
+
+          <div style={{
+            width:30,
+            height:30,
+            borderRadius:"50%",
+            background:"#ffcc00",
+            color:"#000",
+            display:"flex",
+            alignItems:"center",
+            justifyContent:"center",
+            fontSize:16,
+            fontWeight:800,
+            marginBottom:20
+          }}>
+            ⚡
+          </div>
+
+          
+
+          <div style={{
+            fontSize:26,
+            fontWeight:700,
+            marginBottom:20,
+            color:"#ffcc00"
+          }}>
+            Compilazione Rapida
+          </div>
+
+          <div style={{
+            fontSize:17,
+            lineHeight:1.40,
+            color:"#ffffff",
+            marginBottom:20,
+            textAlign:"left"
+          }}>
+            Puoi compilare il modulo parlando oppure scrivendo a mano.
+            <br /> <br />
+            Se usi il comando vocale, puoi aggiungere anche dettagli extra come km, immatricolazione, località o note del cliente. PitStop memorizza tutto.
+          </div>
+
+          <button
+            onClick={() => setTourStep(0)}
+            style={{
+              width:"100%",
+              padding:"10px",
+              borderRadius:12,
+              border:"none",
+              background:"#ffcc00",
+              color:"#000",
+              fontWeight:900
+              
+              
+            }}
+          >
+            HO CAPITO
+          </button>
+
+          
+
+        </div>
+       </>
+
+      )}
+
+      {isTourMode && tourStep === 2 && !showTourChoice && (
+
+        <>
+          <div
+            style={{
+              position:"fixed",
+              inset:0,
+              background:"rgba(0,0,0,0.72)",
+              zIndex:999
+            }}
+          />
+        <div style={{
+          position:"fixed",
+          top:140,
+          left:"50%",
+          transform:"translateX(-50%)",
+          zIndex:1000,
+          width:"min(380px, calc(100% - 24px))",
+          borderRadius:14,
+          background:"rgba(17,17,17,0.78)",
+          backdropFilter:"blur(6px)",
+          padding:"22px",
+          border:"1px solid rgba(255,204,0,0.22)",
+          boxShadow:"0 8px 24px rgba(0,0,0,0.22)",
+        }}>
+
+          
+
+          <div style={{
+            width:30,
+            height:30,
+            borderRadius:"50%",
+            background:"#ffcc00",
+            color:"#000",
+            display:"flex",
+            alignItems:"center",
+            justifyContent:"center",
+            fontSize:16,
+            fontWeight:800,
+            marginBottom:20
+          }}>
+            ⚡
+          </div>
+
+          
+
+          <div style={{
+            fontSize:26,
+            fontWeight:700,
+            marginBottom:20,
+            color:"#ffcc00",
+          }}>
+            Dati Registrati
+          </div>
+
+          <div style={{
+            fontSize:17,
+            lineHeight:1.50,
+            color:"#ffffff",
+            marginBottom:14,
+            textAlign:"left"
+          }}>
+            Ora puoi generare il preventivo oppure salvare una bozza.
+            <br /> <br />
+             I dettagli aggiuntivi dettati sono già stati registrati negli Extra.
+          </div>
+
+          <button
+            onClick={() => setTourStep(0)}
+            style={{
+              width:"100%",
+              padding:"10px",
+              borderRadius:12,
+              border:"none",
+              background:"#ffcc00",
+              color:"#000",
+              fontWeight:900,
+              cursor:"default"
+              
+            }}
+          >    GENERA O SALVA 
+            
+          </button>
+
+          
+
+        </div>
+
+        </>
+      )}
+
       {showExit && (
         <div style={{
           position:"fixed", top:0, left:0, width:"100%", height:"100%",
@@ -890,4 +1199,5 @@ export default function App() {
       )}
     </>
   );
+
 }
