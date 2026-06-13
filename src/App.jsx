@@ -247,7 +247,14 @@ export default function App() {
     loadSubs();
     const params = new URLSearchParams(window.location.search);
     const demoId = params.get("demo");
-    const tourSaved = localStorage.getItem("pitstop_tour");
+    const tourFromUrl = params.get("tour");
+
+    if (tourFromUrl === "1" || tourFromUrl === "0") {
+      localStorage.setItem("pitstop_tour", tourFromUrl);
+    }
+
+    const tourSaved =
+      tourFromUrl || localStorage.getItem("pitstop_tour");
 
     if (demoId && tourSaved === null) {
       setShowTourChoice(true);
