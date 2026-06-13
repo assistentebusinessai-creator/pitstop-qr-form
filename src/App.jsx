@@ -922,6 +922,13 @@ export default function App() {
             <button
               onClick={() => {
                 localStorage.setItem("pitstop_tour", "1");
+
+                window.parent.postMessage(
+                  { type: "PITSTOP_TOUR_SCELTO", value: "1"},
+                  "*"
+
+
+                );
                 setIsTourMode(true);
                 setTourStep(1);
                 setShowTourChoice(false);
@@ -945,6 +952,11 @@ export default function App() {
             <button
               onClick={() => {
                 localStorage.setItem("pitstop_tour", "0");
+
+                window.parent.postMessage(
+                  { type: "PITSTOP_TOUR_SCELTO", value: "0"},
+                  "*"
+                );
                 setIsTourMode(false);
                 setShowTourChoice(false);
               }}
