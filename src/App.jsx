@@ -1137,9 +1137,9 @@ export default function App() {
             marginBottom:14,
             textAlign:"left"
           }}>
-            Ora puoi generare il preventivo oppure salvare una bozza.
+            I dati del cliente sono stati registrati.
             <br /> <br />
-             I dettagli aggiuntivi dettati sono già stati registrati negli Extra.
+            Ora puoi generare il preventivo oppure salvare il lavoro e riprenderlo più tardi.
           </div>
 
           <button
