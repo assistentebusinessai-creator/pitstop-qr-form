@@ -1137,9 +1137,9 @@ export default function App() {
             marginBottom:14,
             textAlign:"left"
           }}>
-            I dati del cliente sono stati registrati.
+            Controlla le informazioni inserite e scegli come procedere.
             <br /> <br />
-            Ora puoi generare il preventivo oppure salvare il lavoro e riprenderlo più tardi.
+            Puoi generare subito il preventivo oppure salvare la bozza e completarla più tardi.
           </div>
 
           <button
