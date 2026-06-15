@@ -1155,7 +1155,7 @@ export default function App() {
               cursor:"default"
               
             }}
-          >    GENERA O SALVA 
+          >    HO CAPITO
             
           </button>
 
