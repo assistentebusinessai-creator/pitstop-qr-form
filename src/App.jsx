@@ -1048,7 +1048,7 @@ export default function App() {
           }}>
             Puoi compilare il modulo parlando oppure scrivendo a mano.
             <br /> <br />
-            Se usi il comando vocale, puoi aggiungere anche dettagli extra come km, immatricolazione, località ecc. Li troverai nella sezione + DETTAGLI della pagina successiva.
+            Se usi il comando vocale, puoi aggiungere anche dettagli extra come km, immatricolazione, località e note cliente. Li troverai nella sezione + DETTAGLI della pagina successiva.
           </div>
 
           <button
