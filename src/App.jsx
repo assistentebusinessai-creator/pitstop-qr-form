@@ -913,7 +913,7 @@ export default function App() {
 
       alert("Il microfono non è partito. Controlla i permessi e riprova.");
     }
-  };};
+  };
 
 
   return (
