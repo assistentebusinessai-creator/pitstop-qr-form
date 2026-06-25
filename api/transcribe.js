@@ -34,9 +34,11 @@ export default async function handler(req, res) {
       testo: transcription.text || "",
     });
   } catch (err) {
-    console.error("Errore trascrizione:", err);
-    return res.status(500).json({
-      error: "Errore trascrizione audio",
-    });
-  }
+      console.error("Errore trascrizione:", err);
+
+      return res.status(500).json({
+        error: err.message,
+        dettaglio: err,
+      });
+    }
 }
