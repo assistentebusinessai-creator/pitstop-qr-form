@@ -856,7 +856,7 @@ export default function App() {
 
               const testo = (trascrizione.testo || "").trim();
               console.log("TESTO TRASCRITTO:", testo);
-               alert("Testo trascritto: " + testo);
+               
               if (!testo) {
                 throw new Error("Trascrizione vuota");
               }
