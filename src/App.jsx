@@ -206,8 +206,15 @@ export default function App() {
   const [screen, setScreen] = useState("form");
   const [form, setForm] = useState({ ...EMPTY });
   const [ascolto, setAscolto] = useState(false);
+
+  // Vecchi ref del vocale.
+  // recRef lo riusiamo, ma ora conterrà MediaRecorder invece di SpeechRecognition.
   const recRef = useRef(null);
   const testoVoceRef = useRef("");
+
+  // Nuovi ref per registrare l'audio vero da mandare a OpenAI
+  const audioChunksRef = useRef([]);
+  const streamRef = useRef(null);
 
   const [errors, setErrors] = useState({});
   const [clientiTrovati, setClientiTrovati] = useState([]);
@@ -742,115 +749,171 @@ export default function App() {
   );
   
   const avviaVoce = async () => {
+    // Se sta già registrando, fermo la registrazione
     if (ascolto && recRef.current) {
       recRef.current.stop();
 
       if (isTourMode) {
         setTourStep(2);
       }
+
       return;
     }
 
-    if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
-      alert("Il tuo browser non supporta il microfono. Usa Safari su iPhone o Chrome su PC.");
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      alert("Il tuo browser non supporta la registrazione audio. Usa Safari su iPhone o Chrome su PC.");
       return;
     }
-
-    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-    const rec = new SR();
-
-    recRef.current = rec;
-    testoVoceRef.current = "";
-    if (isTourMode && tourStep === 1) {
-      setTourStep(0);
-    }
-
-
-    rec.lang = 'it-IT';
-    rec.continuous = true;
-    rec.interimResults = false;
-
-    setAscolto(true);
-
-    rec.onresult = (e) => {
-      let testoCompleto = "";
-
-      for (let i = 0; i < e.results.length; i++) {
-        testoCompleto += " " + e.results[i][0].transcript;
-      }
-
-      testoVoceRef.current = testoCompleto.trim();
-    };
-
-    rec.onerror = (e) => {
-      setAscolto(false);
-      recRef.current = null;
-      console.error("Errore riconoscimento vocale:", e);
-      alert("Errore microfono: " + (e.error || "sconosciuto"));
-    };
-
-    rec.onend = async () => {
-      const testo = testoVoceRef.current.trim();
-
-      recRef.current = null;
-      setAscolto(false);
-
-      if (!testo) return;
-      setElaborandoVoce(true);
-
-      try {
-        const risposta = await fetch('/api/estrai-form', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ testo })
-        });
-
-        const estratto = await risposta.json();
-
-        if (!risposta.ok) {
-          throw new Error(estratto.error || "Errore estrazione");
-        }
-
-        if (estratto.nome) field("nome", estratto.nome.toUpperCase());
-        if (estratto.telefono) field("telefono", estratto.telefono);
-
-        if (estratto.modello) {
-          field("marca", estratto.modello);
-        } else if (estratto.marca) {
-          field("marca", estratto.marca);
-        }
-
-        if (estratto.targa) field("targa", estratto.targa.toUpperCase());
-        if (estratto.problema) field("problema", estratto.problema);
-        if (estratto.cognome) field("cognome", estratto.cognome);
-        if (estratto.km) field("km", estratto.km);
-        if (estratto.via) field("via", estratto.via.toUpperCase());
-        if (estratto.cap) field("cap", estratto.cap);
-        if (estratto.localita) field("localita", estratto.localita.toUpperCase());
-        if (estratto.provincia) field("provincia", estratto.provincia.toUpperCase().slice(0, 2));
-        if (estratto.email) field("email", estratto.email);
-        if (estratto.cf_piva) field("cf_piva", estratto.cf_piva.toUpperCase());
-        if (estratto.data_immatricolazione) field("data_immatricolazione", estratto.data_immatricolazione);
-
-      } catch (err) {
-        console.error("Errore voce:", err);
-        alert("Errore nell'elaborazione. Riprova.");
-      } finally {
-        setElaborandoVoce(false);
-      }
-    };
 
     try {
-      rec.start();
+      audioChunksRef.current = [];
+      testoVoceRef.current = "";
+
+      if (isTourMode && tourStep === 1) {
+        setTourStep(0);
+      }
+
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      streamRef.current = stream;
+
+      const mediaRecorder = new MediaRecorder(stream);
+      recRef.current = mediaRecorder;
+
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data && event.data.size > 0) {
+          audioChunksRef.current.push(event.data);
+        }
+      };
+
+      mediaRecorder.onerror = (event) => {
+        console.error("Errore MediaRecorder:", event);
+        setAscolto(false);
+        recRef.current = null;
+
+        if (streamRef.current) {
+          streamRef.current.getTracks().forEach(track => track.stop());
+          streamRef.current = null;
+        }
+
+        alert("Errore durante la registrazione audio.");
+      };
+
+      mediaRecorder.onstop = async () => {
+        setAscolto(false);
+        recRef.current = null;
+        setElaborandoVoce(true);
+
+        try {
+          const audioBlob = new Blob(audioChunksRef.current, {
+            type: mediaRecorder.mimeType || "audio/webm",
+          });
+
+          if (!audioBlob.size) {
+            throw new Error("Audio vuoto");
+          }
+
+          const reader = new FileReader();
+
+          reader.onloadend = async () => {
+            try {
+              const base64Audio = reader.result.split(",")[1];
+
+              const trascrizioneResp = await fetch("/api/transcribe", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  audioBase64: base64Audio,
+                  mimeType: audioBlob.type || "audio/webm",
+                }),
+              });
+
+              const trascrizione = await trascrizioneResp.json();
+
+              if (!trascrizioneResp.ok) {
+                throw new Error(trascrizione.error || "Errore trascrizione");
+              }
+
+              const testo = (trascrizione.testo || "").trim();
+
+              if (!testo) {
+                throw new Error("Trascrizione vuota");
+              }
+
+              testoVoceRef.current = testo;
+
+              const risposta = await fetch("/api/estrai-form", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ testo }),
+              });
+
+              const estratto = await risposta.json();
+
+              if (!risposta.ok) {
+                throw new Error(estratto.error || "Errore estrazione");
+              }
+
+              if (estratto.nome) field("nome", estratto.nome.toUpperCase());
+              if (estratto.telefono) field("telefono", estratto.telefono);
+
+              if (estratto.modello) {
+                field("marca", estratto.modello);
+              } else if (estratto.marca) {
+                field("marca", estratto.marca);
+              }
+
+              if (estratto.targa) field("targa", estratto.targa.toUpperCase());
+              if (estratto.problema) field("problema", estratto.problema);
+              if (estratto.cognome) field("cognome", estratto.cognome);
+              if (estratto.km) field("km", estratto.km);
+              if (estratto.via) field("via", estratto.via.toUpperCase());
+              if (estratto.cap) field("cap", estratto.cap);
+              if (estratto.localita) field("localita", estratto.localita.toUpperCase());
+              if (estratto.provincia) field("provincia", estratto.provincia.toUpperCase().slice(0, 2));
+              if (estratto.email) field("email", estratto.email);
+              if (estratto.cf_piva) field("cf_piva", estratto.cf_piva.toUpperCase());
+              if (estratto.data_immatricolazione) field("data_immatricolazione", estratto.data_immatricolazione);
+            } catch (err) {
+              console.error("Errore voce:", err);
+              alert("Errore nell'elaborazione. Riprova.");
+            } finally {
+              setElaborandoVoce(false);
+              audioChunksRef.current = [];
+            }
+          };
+
+          reader.readAsDataURL(audioBlob);
+        } catch (err) {
+          console.error("Errore audio:", err);
+          alert("Errore nell'audio registrato. Riprova.");
+          setElaborandoVoce(false);
+        } finally {
+          if (streamRef.current) {
+            streamRef.current.getTracks().forEach(track => track.stop());
+            streamRef.current = null;
+          }
+        }
+      };
+
+      mediaRecorder.start();
+      setAscolto(true);
     } catch (err) {
+      console.error("Errore microfono:", err);
       setAscolto(false);
       recRef.current = null;
-      console.error("Errore start microfono:", err);
-      alert("Il microfono non è partito. Riprova chiudendo e riaprendo la pagina.");
+
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+        streamRef.current = null;
+      }
+
+      alert("Il microfono non è partito. Controlla i permessi e riprova.");
     }
-  };
+  };};
 
 
   return (
