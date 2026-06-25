@@ -816,18 +816,13 @@ export default function App() {
 
           reader.onloadend = async () => {
             try {
-              const base64Audio = reader.result.split(",")[1];
+              const formData = new FormData();
+               formData.append("audio", audioBlob, "voce-officina.webm");
 
-              const trascrizioneResp = await fetch("/api/transcribe", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  audioBase64: base64Audio,
-                  mimeType: audioBlob.type || "audio/webm",
-                }),
-              });
+               const trascrizioneResp = await fetch("/api/transcribe", {
+                 method: "POST",
+                 body: formData,
+               });
 
               const trascrizione = await trascrizioneResp.json();
 
