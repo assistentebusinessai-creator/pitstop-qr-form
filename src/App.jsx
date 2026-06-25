@@ -832,11 +832,15 @@ export default function App() {
               const trascrizione = await trascrizioneResp.json();
 
               if (!trascrizioneResp.ok) {
+               console.error("ERRORE TRANSCRIBE:", trascrizione);
+
+                alert("Errore trascrizione: " + (trascrizione.error || "sconosciuto"));
                 throw new Error(trascrizione.error || "Errore trascrizione");
               }
 
               const testo = (trascrizione.testo || "").trim();
-
+              console.log("TESTO TRASCRITTO:", testo);
+               alert("Testo trascritto: " + testo);
               if (!testo) {
                 throw new Error("Trascrizione vuota");
               }
