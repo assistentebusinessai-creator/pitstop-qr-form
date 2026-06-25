@@ -776,7 +776,22 @@ export default function App() {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       streamRef.current = stream;
 
-      const mediaRecorder = new MediaRecorder(stream);
+      const tipiAudio = [
+         "audio/webm;codecs=opus",
+         "audio/webm",
+         "audio/mp4",
+      ];
+
+      const tipoSupportato = tipiAudio.find(tipo =>
+        MediaRecorder.isTypeSupported(tipo)
+      );
+
+      const mediaRecorder = tipoSupportato
+        ? new MediaRecorder(stream, { mimeType: tipoSupportato })
+        : new MediaRecorder(stream);
+
+      console.log("MIME RECORDER:", mediaRecorder.mimeType);
+
       recRef.current = mediaRecorder;
 
       mediaRecorder.ondataavailable = (event) => {
@@ -816,9 +831,15 @@ export default function App() {
 
           reader.onloadend = async () => {
             try {
-              const formData = new FormData();
-               formData.append("audio", audioBlob, "voce-officina.webm");
+              const mime = audioBlob.type || "audio/webm";
 
+              let estensione = "webm";
+              if (mime.includes("mp4")) estensione = "mp4";
+              if (mime.includes("mpeg")) estensione = "mp3";
+              if (mime.includes("wav")) estensione = "wav";
+
+              const formData = new FormData();
+              formData.append("audio", audioBlob, `voce-officina.${estensione}`);
                const trascrizioneResp = await fetch("/api/transcribe", {
                  method: "POST",
                  body: formData,
